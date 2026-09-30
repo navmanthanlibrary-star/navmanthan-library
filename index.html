@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b0b10">
+<title>Navmanthan Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   TOKENS
+════════════════════════════════════════ */
+:root{
+  --bg:#0b0b10;--sf:#12121a;--sf2:#191922;--sf3:#20202c;--bd:#27273a;
+  --ac:#f5c842;--acd:rgba(245,200,66,.13);
+  --tx:#eaeaf4;--mt:#6e6e8a;--dm:#36364c;
+  --ok:#3ecf8e;--okd:rgba(62,207,142,.13);
+  --wn:#f5a623;--wnd:rgba(245,166,35,.13);
+  --er:#ff5050;--erd:rgba(255,80,80,.13);
+  --inf:#6c8ef5;--infd:rgba(108,142,245,.13);
+  --pu:#a855f7;--pud:rgba(168,85,247,.13);
+  --hA:#f5c842;--hAd:rgba(245,200,66,.15);
+  --hB:#3ecf8e;--hBd:rgba(62,207,142,.15);
+  --hC:#6c8ef5;--hCd:rgba(108,142,245,.15);
+  --hD:#f5a623;--hDd:rgba(245,166,35,.15);
+  --hE:#a855f7;--hEd:rgba(168,85,247,.15);
+  --r:12px;--rs:8px;
+  --nav-h:62px;
+  --top-h:54px;
+  --sidebar-w:228px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
+h1,h2,h3,h4{font-family:'Syne',sans-serif}
+input,select,button,textarea{font-family:'DM Sans',sans-serif}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--sf)}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+
+/* ════════════════════════════════════════
+   SHARED COMPONENTS
+════════════════════════════════════════ */
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:9.5px;font-weight:700;white-space:nowrap}
+.tag-morning{background:var(--wnd);color:var(--wn)}.tag-evening{background:var(--infd);color:var(--inf)}
+.tag-fullday{background:var(--okd);color:var(--ok)}.tag-24hour{background:var(--pud);color:var(--pu)}
+.tag-paid{background:var(--okd);color:var(--ok)}.tag-due{background:var(--erd);color:var(--er)}.tag-partial{background:var(--wnd);color:var(--wn)}
+.tag-hA{background:var(--hAd);color:var(--hA)}.tag-hB{background:var(--hBd);color:var(--hB)}
+.tag-hC{background:var(--hCd);color:var(--hC)}.tag-hD{background:var(--hDd);color:var(--hD)}.tag-hE{background:var(--hEd);color:var(--hE)}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne';font-weight:800;flex-shrink:0}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.ch{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.ch h3{font-size:13.5px;font-weight:700;flex:1}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:9px 16px;font-size:9px;color:var(--mt);text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:1px solid var(--bd);background:var(--sf2);white-space:nowrap}
+td{padding:11px 16px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.01)}
+.si{display:flex;align-items:center;gap:9px}.sn{font-weight:500;font-size:13px}.sp{font-size:11px;color:var(--mt)}
+.sbox{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:7px 11px;color:var(--tx);font-size:12.5px;outline:none;width:190px}
+.sbox:focus{border-color:var(--ac)}.sbox::placeholder{color:var(--dm)}
+.btn{padding:8px 15px;border-radius:var(--rs);border:none;cursor:pointer;font-size:12.5px;font-weight:500;transition:all .13s;display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.bp{background:var(--ac);color:#0b0b10}.bp:active{opacity:.85}
+.bg{background:transparent;color:var(--mt);border:1px solid var(--bd)}.bg:hover{background:var(--sf2);color:var(--tx)}
+.bsuc{background:var(--ok);color:#0b0b10}.berr{background:var(--er);color:#fff}.binf{background:var(--inf);color:#fff}
+.btn-sm{padding:5px 11px;font-size:11.5px}.btn-xs{padding:3px 8px;font-size:11px}.btn-full{width:100%}
+.tabs{display:flex;gap:3px;background:var(--sf2);padding:3px;border-radius:var(--rs)}
+.tab{padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:500;color:var(--mt);transition:all .13s}
+.tab.active{background:var(--sf3);color:var(--tx)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:5px 12px;border-radius:20px;white-space:nowrap;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bd);color:var(--mt);transition:all .13s;flex-shrink:0}
+.chip.active{background:var(--acd);border-color:var(--ac);color:var(--ac)}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+.fg label{font-size:10px;color:var(--mt);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.fi,.fs{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 12px;color:var(--tx);font-size:13.5px;outline:none;width:100%;-webkit-appearance:none}
+.fi:focus,.fs:focus{border-color:var(--ac)}.fs option{background:var(--sf2)}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:13px}.fg2 .full{grid-column:1/-1}
+.ph-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)}
+.ph-row:last-child{border-bottom:none}
+.sec-lbl{font-size:9.5px;font-weight:700;color:var(--dm);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.list-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+.list-item:last-child{border-bottom:none}.list-item:active{background:var(--sf2)}
+.li-info{flex:1;min-width:0}.li-name{font-weight:500;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li-sub{font-size:11px;color:var(--mt);margin-top:1px}.li-right{text-align:right;flex-shrink:0}
+.prog-wrap{background:var(--sf2);border-radius:3px;height:3px;overflow:hidden;margin-top:4px;width:100%}
+.prog-bar{height:100%;border-radius:3px}
+.seat-bdg{display:inline-flex;align-items:center;gap:4px;font-family:'Syne';font-weight:700;font-size:12px}
+.hall-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* Hall map shared */
+.hall-block{border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.hall-hdr{padding:11px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--bd)}
+.hall-hdr h4{font-size:13px;font-weight:800;flex:1;font-family:'Syne'}
+.hall-hdr .hs{font-size:10.5px;color:var(--mt)}
+.hall-seats-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
+.mseat{width:54px;height:54px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:13px;cursor:pointer;border:2px solid transparent;position:relative;font-family:'Syne';transition:all .12s}
+.mseat.avail{background:var(--sf3);border-color:var(--bd)}.mseat.avail:hover{border-color:var(--ok)}
+.mseat.occ{border-color:rgba(255,80,80,.3)}.mseat.occ-due{border-color:rgba(255,80,80,.5)}
+.mseat .msno{font-size:7px;color:var(--dm);position:absolute;top:2px;left:0;right:0;text-align:center}
+.sdots{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:2px}
+.sdot{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;cursor:pointer;transition:all .12s;font-family:'Syne'}
+.al-item{border:1px solid var(--bd);border-radius:var(--r);padding:13px 15px;margin-bottom:10px;border-left:3px solid var(--er)}
+.al-item.w{border-left-color:var(--wn)}
+.al-top{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.al-name{font-weight:600;font-size:13.5px}
+.al-meta{font-size:11px;color:var(--mt);line-height:1.7}
+.al-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
+.stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc-y::after{background:var(--ac)}.sc-r::after{background:var(--er)}.sc-g::after{background:var(--ok)}.sc-b::after{background:var(--inf)}.sc-p::after{background:var(--pu)}
+.stat-lbl{font-size:9.5px;color:var(--mt);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:5px;font-weight:600}
+.stat-val{font-family:'Syne';font-size:27px;font-weight:800;line-height:1}
+.stat-sub{font-size:11px;color:var(--mt);margin-top:4px}
+.fee-cfg-card{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:12px;margin-bottom:10px}
+/* Receipt */
+.rx-card{background:var(--sf2);border-radius:var(--r);padding:16px;margin-bottom:13px;text-align:center}
+.rx-lib{font-family:'Syne';font-size:18px;font-weight:800;color:var(--ac)}
+.rx-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd);font-size:12.5px}
+.rx-row:last-child{border-bottom:none}
+.rx-row span:first-child{color:var(--mt)}.rx-row span:last-child{font-weight:500}
+hr.rxd{border:none;border-top:2px dashed var(--bd);margin:12px 0}
+/* Photo capture */
+.photo-capture{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:14px}
+.photo-preview{width:90px;height:90px;border-radius:50%;border:3px solid var(--bd);background:var(--sf2);overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-preview .ph-placeholder{font-family:'Syne';font-size:28px;font-weight:800;color:var(--dm)}
+.photo-preview .ph-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:50%;font-size:18px}
+.photo-preview:hover .ph-overlay{opacity:1}
+.photo-btns{display:flex;gap:8px}
+.photo-btns button{padding:5px 12px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sf2);color:var(--mt);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.photo-btns button:hover{background:var(--sf3);color:var(--tx)}
+/* Camera modal */
+.cam-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;flex-direction:column;align-items:center;justify-content:center}
+.cam-modal.open{display:flex}
+.cam-video{width:min(380px,90vw);aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid var(--ac);object-fit:cover}
+.cam-controls{display:flex;gap:14px;margin-top:24px}
+.cam-shoot{width:64px;height:64px;border-radius:50%;background:var(--ac);border:none;color:#0b0b10;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cam-cancel{padding:10px 20px;border-radius:var(--rs);background:var(--sf2);border:1px solid var(--bd);color:var(--mt);font-size:13px;cursor:pointer}
+.cam-canvas{display:none}
+/* ── EXPORT BUTTONS ── */
+.export-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sf2);color:var(--tx);font-size:13px;font-weight:500;cursor:pointer;transition:all .13s}
+.export-btn:hover{background:var(--sf3);border-color:var(--ac);color:var(--ac)}
+/* Print */
+#rxPrint{display:none}
+@media print{body>*:not(#rxPrint){display:none!important}#rxPrint{display:block!important;padding:24px;max-width:380px;margin:0 auto;color:#000;font-family:sans-serif}#rxPrint h2{text-align:center;font-size:18px}#rxPrint .rsub{text-align:center;font-size:11px;color:#666;margin-bottom:14px}#rxPrint .rr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #eee;font-size:12px}#rxPrint .rr.tot{font-weight:800;border-top:2px solid #000;border-bottom:none}#rxPrint .rft{text-align:center;margin-top:14px;font-size:10px;color:#999}}
+/* Toast */
+.toast{position:fixed;z-index:9999;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--r);padding:11px 15px;font-size:13px;display:flex;align-items:center;gap:8px;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-left:3px solid var(--ok)}.toast.err{border-left:3px solid var(--er)}
+
+/* ════════════════════════════════════════
+   DESKTOP LAYOUT  (≥ 768px)
+════════════════════════════════════════ */
+#desktop-app{display:none}
+#mobile-app{display:none}
+
+@media(min-width:768px){
+  #desktop-app{display:flex;min-height:100vh}
+  .toast{bottom:20px;right:20px;left:auto;top:auto}
+  .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:16px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .logo{padding:0 15px 18px;border-bottom:1px solid var(--bd);margin-bottom:11px}
+  .logo h1{font-size:17px;font-weight:800;color:var(--ac);letter-spacing:-.5px}
+  .logo span{font-size:10.5px;color:var(--dm);font-weight:300}
+  .ns{padding:4px 9px 2px}.nl{font-size:8.5px;font-weight:700;color:var(--dm);letter-spacing:1.8px;text-transform:uppercase;padding:0 6px 5px}
+  .ni{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:var(--rs);cursor:pointer;color:var(--mt);font-size:12.5px;transition:all .13s}
+  .ni:hover{background:var(--sf2);color:var(--tx)}.ni.active{background:var(--sf3);color:var(--ac);font-weight:600}
+  .ni .ico{width:16px;text-align:center;font-size:14px}
+  .ni .dbdg{margin-left:auto;background:var(--er);color:#fff;font-size:8.5px;font-weight:800;padding:1px 5px;border-radius:20px}
+  .d-main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .d-topbar{background:var(--sf);border-bottom:1px solid var(--bd);padding:12px 22px;display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:10}
+  .d-topbar h2{font-size:16px;font-weight:700;flex:1}
+  .d-content{padding:20px 22px;flex:1}
+  .d-page{display:none}.d-page.active{display:block}
+  .sg{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+  .d-hall-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+}
+
+/* ════════════════════════════════════════
+   MOBILE LAYOUT  (< 768px)
+════════════════════════════════════════ */
+@media(max-width:767px){
+  html,body{height:100%;overflow:hidden}
+  #mobile-app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+  .toast{top:calc(var(--top-h) + 8px);left:12px;right:12px;bottom:auto}
+  .m-topbar{height:var(--top-h);background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 14px;gap:10px;position:relative;z-index:20;flex-shrink:0;padding-top:env(safe-area-inset-top,0px)}
+  .m-topbar .logo-m{font-family:'Syne';font-size:18px;font-weight:800;color:var(--ac)}
+  .m-topbar .pg-ttl{flex:1;font-size:15px;font-weight:700;text-align:center}
+  .m-topbar .tb-act{background:var(--acd);border:none;border-radius:8px;padding:6px 12px;color:var(--ac);font-size:12px;font-weight:600;cursor:pointer}
+  #m-screens{flex:1;overflow:hidden;position:relative}
+  .m-screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:13px 13px calc(var(--nav-h) + 14px);display:none;-webkit-overflow-scrolling:touch}
+  .m-screen.active{display:block}
+  .bottom-nav{height:var(--nav-h);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--sf);border-top:1px solid var(--bd);display:flex;align-items:flex-start;z-index:20;flex-shrink:0}
+  .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:9px;cursor:pointer;color:var(--mt);gap:3px;position:relative;min-height:var(--nav-h)}
+  .bn-item.active{color:var(--ac)}
+  .bn-item .bico{font-size:20px;line-height:1}.bn-item .blbl{font-size:9.5px;font-weight:600}
+  .bn-item .mbdg{position:absolute;top:6px;right:calc(50% - 20px);background:var(--er);color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:10px;min-width:14px;text-align:center}
+  .fab{position:fixed;right:14px;bottom:calc(var(--nav-h) + 10px);width:50px;height:50px;border-radius:50%;background:var(--ac);color:#0b0b10;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(245,200,66,.4);cursor:pointer;z-index:30;border:none;font-weight:700}
+  .m-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+  /* Bottom sheet */
+  .sh-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100}
+  .sh-ov.open{display:block}
+  .sheet{position:fixed;bottom:0;left:0;right:0;z-index:101;background:var(--sf);border-radius:18px 18px 0 0;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .32s cubic-bezier(.32,1,.28,1);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .sheet.open{transform:translateY(0)}
+  .sh-handle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:10px auto 0}
+  .sh-hdr{padding:13px 18px 11px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+  .sh-hdr h3{font-size:15px;font-weight:700}
+  .sh-cls{background:none;border:none;color:var(--mt);font-size:22px;cursor:pointer;padding:0;line-height:1}
+  .sh-body{flex:1;overflow-y:auto;padding:15px 17px;-webkit-overflow-scrolling:touch}
+  .sh-foot{padding:11px 17px;border-top:1px solid var(--bd);display:flex;gap:8px}
+  .form-section{margin-bottom:18px}
+  .form-section h4{font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+}
+
+/* ════════════════════════════════════════
+   DESKTOP MODAL  (shared between both but only shown on desktop)
+════════════════════════════════════════ */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;align-items:center;justify-content:center;padding:14px}
+.mo.open{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);width:580px;max-width:100%;max-height:92vh;overflow-y:auto}
+.modal.wide{width:680px}.modal.narrow{width:460px}
+.mh{padding:15px 19px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.mh h3{font-size:14.5px;font-weight:700}
+.mc{cursor:pointer;background:none;border:none;color:var(--mt);font-size:20px;line-height:1}
+.mb{padding:19px}.mf{padding:11px 19px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+.hall-stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.rg{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px}
+.rc{background:var(--sf2);border-radius:var(--rs);padding:12px}
+.rl{font-size:9px;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;font-weight:600}
+.rv{font-family:'Syne';font-size:20px;font-weight:800}
+</style>
+</head>
+<body>
+
+<style>
+#loginScreen{position:fixed;inset:0;z-index:10000;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px}
+#loginScreen.show{display:flex}
+#loginScreen .lbox{width:100%;max-width:360px;background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:26px 22px}
+#loginScreen h2{color:var(--ac);font-size:22px;font-weight:800;margin-bottom:4px}
+#loginScreen .lsub{color:var(--mt);font-size:12.5px;margin-bottom:18px}
+#loginErr{color:#ff5050;font-size:12.5px;min-height:18px;margin:6px 0 10px}
+#loginScreen .lbtn{width:100%;padding:11px;border:none;border-radius:10px;background:var(--ac);color:#0b0b10;font-weight:700;font-size:14px;cursor:pointer}
+#loginScreen .lbtn:disabled{opacity:.6}
+#loginScreen .llink{display:block;text-align:center;margin-top:14px;color:var(--mt);font-size:12px;cursor:pointer;text-decoration:underline}
+</style>
+<div id="loginScreen">
+  <div class="lbox">
+    <h2>📚 Navmanthan Library</h2>
+    <div class="lsub">Please log in to continue</div>
+    <div class="fg"><label>Email</label><input class="fi" id="lgEmail" type="email" autocomplete="username" placeholder="you@example.com"></div>
+    <div class="fg"><label>Password</label><input class="fi" id="lgPass" type="password" autocomplete="current-password" placeholder="Password" onkeydown="if(event.key==='Enter')authLogin()"></div>
+    <div id="loginErr"></div>
+    <button class="lbtn" id="lgBtn" onclick="authLogin()">Log in</button>
+    <span class="llink" onclick="authForgot()">Forgot password?</span>
+  </div>
+</div><div id="rxPrint"></div>
+
+<!-- ════════════════════════════════════════
+     DESKTOP APP
+════════════════════════════════════════ -->
+<div id="desktop-app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo"><h1>📚 Navmanthan</h1><span>Self Study Library</span></div>
+    <div class="ns"><div class="nl">Overview</div>
+      <div class="ni active" onclick="dNav('dashboard')"><span class="ico">⊞</span>Dashboard</div>
+    </div>
+    <div class="ns"><div class="nl">Students</div>
+      <div class="ni" onclick="dNav('students')"><span class="ico">👤</span>All Students</div>
+      <div class="ni" onclick="dNav('fees')"><span class="ico">💳</span>Fee Records</div>
+      <div class="ni" onclick="dNav('alerts')"><span class="ico">🔔</span>Due Alerts<span class="dbdg" id="d-aBdg">0</span></div>
+    </div>
+    <div class="ns"><div class="nl">Library</div>
+      <div class="ni" onclick="dNav('seats')"><span class="ico">🏛</span>Hall & Seat Map</div>
+      <div class="ni" onclick="dNav('reports')"><span class="ico">📊</span>Monthly Reports</div>
+    </div>
+    <div class="ns"><div class="nl">Settings</div>
+      <div class="ni" onclick="dNav('settings')"><span class="ico">⚙️</span>Fee & Library Settings</div>
+    </div>
+  </aside>
+  <!-- Main -->
+  <div class="d-main">
+    <div class="d-topbar">
+      <h2 id="d-pgTitle">Dashboard</h2>
+      <span id="d-todayDate" style="font-size:11px;color:var(--mt);"></span>
+      <button class="btn bg btn-sm" onclick="dNav('reports')">📊 Reports</button>
+      <button class="btn bp" onclick="openAdd()">+ Add Student</button>
+    </div>
+    <div class="d-content">
+      <!-- Dashboard -->
+      <div class="d-page active" id="dp-dashboard">
+        <div class="sg">
+          <div class="stat-card sc-y"><div class="stat-lbl">Total Students</div><div class="stat-val" id="d-st0">0</div><div class="stat-sub">Active</div></div>
+          <div class="stat-card sc-r"><div class="stat-lbl">Fees Due</div><div class="stat-val" id="d-st1">0</div><div class="stat-sub">Unpaid this month</div></div>
+          <div class="stat-card sc-g"><div class="stat-lbl">Paid</div><div class="stat-val" id="d-st2">0</div><div class="stat-sub" id="d-st2s">₹0 collected</div></div>
+          <div class="stat-card sc-b"><div class="stat-lbl">Occupied Seats</div><div class="stat-val" id="d-st3">0</div><div class="stat-sub" id="d-st3s">of 132</div></div>
+          <div class="stat-card sc-p"><div class="stat-lbl">Free Shift-Slots</div><div class="stat-val" id="d-st4">0</div><div class="stat-sub">available</div></div>
+        </div>
+        <div class="d-hall-strip" id="d-hallStrip"></div>
+        <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;">
+          <div class="card"><div class="ch"><h3>🔔 Due Alerts</h3><button class="btn bg btn-sm" onclick="dNav('alerts')">View All</button></div><div id="d-dashAlerts"></div></div>
+          <div class="card"><div class="ch"><h3>🆕 Recent Students</h3><button class="btn bg btn-sm" onclick="dNav('students')">View All</button></div><div id="d-dashRecent"></div></div>
+        </div>
+      </div>
+      <!-- Students -->
+      <div class="d-page" id="dp-students">
+        <div class="card">
+          <div class="ch">
+            <h3>All Students</h3>
+            <div class="tabs"><div class="tab active" onclick="setSTab('all',this)">All</div><div class="tab" onclick="setSTab('morning',this)">Morning</div><div class="tab" onclick="setSTab('evening',this)">Evening</div><div class="tab" onclick="setSTab('fullday',this)">Full Day</div><div class="tab" onclick="setSTab('24hour',this)">24 Hr</div></div>
+            <div class="tabs" style="margin-left:2px;"><div class="tab active" onclick="setHTab('all',this)">All Halls</div><div class="tab" onclick="setHTab('A',this)">A</div><div class="tab" onclick="setHTab('B',this)">B</div><div class="tab" onclick="setHTab('C',this)">C</div><div class="tab" onclick="setHTab('D',this)">D</div><div class="tab" onclick="setHTab('E',this)">E</div></div>
+            <input class="sbox" id="d-ss" type="text" placeholder="🔍 Name, phone, seat…" oninput="renderStudents()">
+            <button class="btn bp btn-sm" onclick="openAdd()">+ Add</button>
+          </div>
+          <div id="d-sTbl"></div>
+        </div>
+      </div>
+      <!-- Fees -->
+      <div class="d-page" id="dp-fees">
+        <div class="card">
+          <div class="ch">
+            <h3>Fee Records — <span id="d-fML"></span></h3>
+            <input type="month" id="d-fMP" class="fi" style="width:148px;padding:6px 9px;font-size:12px;" onchange="renderFees()">
+            <div class="tabs"><div class="tab active" onclick="setFTab('all',this)">All</div><div class="tab" onclick="setFTab('paid',this)">Paid</div><div class="tab" onclick="setFTab('due',this)">Due</div><div class="tab" onclick="setFTab('partial',this)">Partial</div></div>
+            <input class="sbox" id="d-fs" type="text" placeholder="🔍 Search…" oninput="renderFees()">
+          </div>
+          <div id="d-fTbl"></div>
+        </div>
+      </div>
+      <!-- Alerts -->
+      <div class="d-page" id="dp-alerts">
+        <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px;"><p style="flex:1;color:var(--mt);font-size:12.5px;">Students with unpaid or partial fees this month.</p><button class="btn bg btn-sm" onclick="renderAlerts()">↻ Refresh</button></div>
+        <div id="d-aList"></div>
+      </div>
+      <!-- Seats -->
+      <div class="d-page" id="dp-seats">
+        <div class="card">
+          <div class="ch">
+            <h3>Hall & Seat Map</h3>
+            <div class="tabs"><div class="tab active" onclick="setHallView('all',this,'d')">All</div><div class="tab" onclick="setHallView('A',this,'d')">Hall A</div><div class="tab" onclick="setHallView('B',this,'d')">Hall B</div><div class="tab" onclick="setHallView('C',this,'d')">Hall C</div><div class="tab" onclick="setHallView('D',this,'d')">Hall D</div><div class="tab" onclick="setHallView('E',this,'d')">Hall E</div></div>
+            <select class="fs" id="d-seatSF" style="width:130px;padding:5px 9px;font-size:12px;" onchange="renderHalls(currentHV,'d')"><option value="all">All Shifts</option><option value="morning">Morning</option><option value="evening">Evening</option><option value="fullday">Full Day</option><option value="24hour">24 Hour</option></select>
+            <span style="font-size:11px;color:var(--mt);" id="d-seatStat"></span>
+          </div>
+          <div style="padding:10px 14px 6px;display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mt);">
+            <span>◻ Available</span><span style="color:var(--ok);">◼ Occupied (Paid)</span><span style="color:var(--er);">◼ Occupied (Due)</span>
+            <span style="margin-left:auto;font-size:10px;">M=Morning E=Evening F=FullDay N=24Hr</span>
+          </div>
+          <div id="d-hallMap"></div>
+        </div>
+        <div id="d-seatDetCard" style="display:none;" class="card">
+          <div class="ch"><h3 id="d-sDTitle"></h3></div>
+          <div style="padding:15px;" id="d-sDBody"></div>
+        </div>
+      </div>
+      <!-- Reports -->
+      <div class="d-page" id="dp-reports">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <input type="month" id="d-rM" class="fi" style="width:155px;padding:7px 10px;" onchange="renderReport()">
+          <button class="btn bp btn-sm" onclick="printReport()">🖨 Print</button>
+        </div>
+        <div class="rg" id="d-rStats"></div>
+        <div class="hall-stat-row" id="d-rHalls"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="card"><div class="ch"><h3>✅ Payments Received</h3></div><div id="d-rPaid"></div></div>
+          <div class="card"><div class="ch"><h3>❌ Outstanding Dues</h3></div><div id="d-rDue"></div></div>
+        </div>
+      </div>
+      <!-- Settings -->
+      <div class="d-page" id="dp-settings">
+        <div style="max-width:540px;">
+          <!-- ACCOUNT -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch"><h3>🔐 Account</h3></div>
+            <div style="padding:16px;">
+              <p style="font-size:12px;color:var(--mt);margin-bottom:12px;">Logged in as <b class="acctEmail" style="color:var(--tx);">—</b></p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn bg" onclick="authResetPw()">🔑 Change password</button>
+                <button class="btn bp" onclick="authLogout()">🚪 Log out</button>
+              </div>
+            </div>
+          </div>
+          <!-- EXPORT -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch"><h3>📤 Export Data</h3></div>
+            <div style="padding:16px;">
+              <p style="font-size:12px;color:var(--mt);margin-bottom:14px;">Download all student and payment records as a spreadsheet.</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="export-btn" onclick="exportCSV()">📄 Export CSV</button>
+                <button class="export-btn" onclick="exportXLSX()">📊 Export Excel (.xlsx)</button>
+              </div>
+              <p style="font-size:11px;color:var(--dm);margin-top:10px;">CSV opens in Excel, Google Sheets, or any spreadsheet app. Excel file includes multiple sheets.</p>
+            </div>
+          </div>
+          <!-- SHIFT FEES -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch"><h3>⚙️ Shift Fee Configuration</h3></div>
+            <div style="padding:16px;"><p style="font-size:12px;color:var(--mt);margin-bottom:12px;">Default fees auto-fill when selecting a shift during enrollment.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="d-feeCfg"></div>
+            <div style="margin-top:14px;"><button class="btn bp" onclick="saveFees()">Save Fee Settings</button></div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><h3>🏛 Library Information</h3></div>
+            <div style="padding:16px;">
+              <div class="fg2">
+                <div class="fg"><label>Library Name</label><input class="fi" id="d-lN" placeholder="Library name"></div>
+                <div class="fg"><label>Owner / Manager</label><input class="fi" id="d-lO" placeholder="Your name"></div>
+                <div class="fg full"><label>Address</label><input class="fi" id="d-lA" placeholder="Address for receipts"></div>
+                <div class="fg"><label>Phone</label><input class="fi" id="d-lP" placeholder="Contact number"></div>
+              </div>
+              <button class="btn bp" onclick="saveLib()">Save Info</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MOBILE APP
+════════════════════════════════════════ -->
+<div id="mobile-app">
+  <div class="m-topbar">
+    <span class="logo-m">📚 Navmanthan</span>
+    <span class="pg-ttl" id="m-pgTitle">Dashboard</span>
+    <button class="tb-act" id="m-topBtn" onclick="openAdd()">+ Add</button>
+  </div>
+  <div id="m-screens">
+    <!-- Dashboard -->
+    <div class="m-screen active" id="ms-dashboard">
+      <div class="m-stat-row"><div class="stat-card sc-y" style="padding:13px;"><div class="stat-lbl">Students</div><div class="stat-val" id="m-st0">0</div><div class="stat-sub">enrolled</div></div>
+        <div class="stat-card sc-r" style="padding:13px;"><div class="stat-lbl">Fees Due</div><div class="stat-val" id="m-st1">0</div><div class="stat-sub">this month</div></div></div>
+      <div class="m-stat-row" style="margin-bottom:12px;">
+        <div class="stat-card sc-g" style="padding:13px;"><div class="stat-lbl">Paid</div><div class="stat-val" id="m-st2">0</div><div class="stat-sub" id="m-st2s">₹0 collected</div></div>
+        <div class="stat-card sc-b" style="padding:13px;"><div class="stat-lbl">Occupied</div><div class="stat-val" id="m-st3">0</div><div class="stat-sub" id="m-st3s">of 132 seats</div></div></div>
+      <div id="m-hallStrip" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;"></div>
+      <div class="card"><div class="ch"><h3>🔔 Due Alerts</h3><button class="btn bg btn-xs" onclick="mNav('alerts')">All</button></div><div id="m-dashAlerts"></div></div>
+      <div class="card"><div class="ch"><h3>🆕 Recent</h3><button class="btn bg btn-xs" onclick="mNav('students')">All</button></div><div id="m-dashRecent"></div></div>
+    </div>
+    <!-- Students -->
+    <div class="m-screen" id="ms-students">
+      <div style="padding:8px 0 0;"><input class="fi" style="border-radius:10px;" id="m-ss" type="text" placeholder="🔍 Name, phone, seat…" oninput="renderStudents()"></div>
+      <div class="chips" id="m-shiftChips"><div class="chip active" onclick="setSTab('all',this)">All</div><div class="chip" onclick="setSTab('morning',this)">Morning</div><div class="chip" onclick="setSTab('evening',this)">Evening</div><div class="chip" onclick="setSTab('fullday',this)">Full Day</div><div class="chip" onclick="setSTab('24hour',this)">24 Hr</div></div>
+      <div class="chips" id="m-hallChips" style="padding-top:0;"><div class="chip active" onclick="setHTab('all',this)">All Halls</div><div class="chip" onclick="setHTab('A',this)">Hall A</div><div class="chip" onclick="setHTab('B',this)">Hall B</div><div class="chip" onclick="setHTab('C',this)">Hall C</div><div class="chip" onclick="setHTab('D',this)">Hall D</div><div class="chip" onclick="setHTab('E',this)">Hall E</div></div>
+      <div id="m-stuList"></div>
+    </div>
+    <!-- Halls -->
+    <div class="m-screen" id="ms-halls">
+      <div class="chips" id="m-hallViewChips"><div class="chip active" onclick="setHallView('all',this,'m')">All</div><div class="chip" onclick="setHallView('A',this,'m')">Hall A</div><div class="chip" onclick="setHallView('B',this,'m')">Hall B</div><div class="chip" onclick="setHallView('C',this,'m')">Hall C</div><div class="chip" onclick="setHallView('D',this,'m')">Hall D</div><div class="chip" onclick="setHallView('E',this,'m')">Hall E</div></div>
+      <div style="padding:6px 4px 8px;font-size:10.5px;color:var(--mt);">M=Morning · E=Evening · F=FullDay · N=24Hr &nbsp;|&nbsp; Tap dot to act</div>
+      <div id="m-hallMap"></div>
+    </div>
+    <!-- Fees -->
+    <div class="m-screen" id="ms-fees">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+        <input type="month" id="m-fMP" class="fi" style="flex:1;padding:8px 10px;font-size:12px;" onchange="renderFees()">
+        <span id="m-fML" style="font-size:11px;color:var(--mt);flex-shrink:0;"></span>
+      </div>
+      <div class="chips" id="m-feeChips"><div class="chip active" onclick="setFTab('all',this)">All</div><div class="chip" onclick="setFTab('paid',this)">Paid</div><div class="chip" onclick="setFTab('due',this)">Due</div><div class="chip" onclick="setFTab('partial',this)">Partial</div></div>
+      <div id="m-feeList"></div>
+    </div>
+    <!-- Alerts -->
+    <div class="m-screen" id="ms-alerts">
+      <p style="font-size:12px;color:var(--mt);padding:8px 2px 12px;">Students with unpaid or partial fees — tap Collect to record payment.</p>
+      <div id="m-aList"></div>
+    </div>
+    <!-- More -->
+    <div class="m-screen" id="ms-more">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <input type="month" id="m-rM" class="fi" style="flex:1;padding:8px 10px;" onchange="renderReport()">
+        <button class="btn bg btn-sm" onclick="printReport()">🖨</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;" id="m-rStats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;" id="m-rHalls"></div>
+      <div class="card" style="margin-bottom:10px;"><div class="ch"><h3>✅ Paid</h3></div><div id="m-rPaid"></div></div>
+      <div class="card" style="margin-bottom:16px;"><div class="ch"><h3>❌ Due</h3></div><div id="m-rDue"></div></div>
+      <div style="height:1px;background:var(--bd);margin-bottom:14px;"></div>
+      <div class="sec-lbl" style="padding:0 2px 6px;">⚙️ Settings</div>
+      <!-- ACCOUNT mobile -->
+      <div class="card" style="margin-bottom:10px;">
+        <div class="ch"><h3>🔐 Account</h3></div>
+        <div style="padding:13px;">
+          <p style="font-size:12px;color:var(--mt);margin-bottom:10px;">Logged in as <b class="acctEmail" style="color:var(--tx);">—</b></p>
+          <button class="btn bg btn-full" style="margin-bottom:8px;" onclick="authResetPw()">🔑 Change password</button>
+          <button class="btn bp btn-full" onclick="authLogout()">🚪 Log out</button>
+        </div>
+      </div>
+      <!-- EXPORT mobile -->
+      <div class="card" style="margin-bottom:10px;">
+        <div class="ch"><h3>📤 Export Data</h3></div>
+        <div style="padding:13px;display:flex;flex-direction:column;gap:9px;">
+          <button class="export-btn btn-full" style="justify-content:center;" onclick="exportCSV()">📄 Export CSV</button>
+          <button class="export-btn btn-full" style="justify-content:center;" onclick="exportXLSX()">📊 Export Excel (.xlsx)</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <div class="ch"><h3>Shift Fees</h3></div>
+        <div style="padding:13px;" id="m-feeCfg"></div>
+        <div style="padding:0 13px 13px;"><button class="btn bp btn-full" onclick="saveFees()">Save Fee Settings</button></div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="ch"><h3>Library Info</h3></div>
+        <div style="padding:13px;">
+          <div class="fg"><label>Library Name</label><input class="fi" id="m-lN" placeholder="Library name"></div>
+          <div class="fg"><label>Owner</label><input class="fi" id="m-lO" placeholder="Your name"></div>
+          <div class="fg"><label>Address</label><input class="fi" id="m-lA" placeholder="Address"></div>
+          <div class="fg"><label>Phone</label><input class="fi" id="m-lP" placeholder="Phone"></div>
+          <button class="btn bp btn-full" onclick="saveLib()">Save Info</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <div class="bn-item active" id="bn-dashboard" onclick="mNav('dashboard')"><div class="bico">⊞</div><div class="blbl">Home</div></div>
+    <div class="bn-item" id="bn-students" onclick="mNav('students')"><div class="bico">👤</div><div class="blbl">Students</div></div>
+    <div class="bn-item" id="bn-halls" onclick="mNav('halls')"><div class="bico">🏛</div><div class="blbl">Halls</div></div>
+    <div class="bn-item" id="bn-fees" onclick="mNav('fees')"><div class="bico">💳</div><div class="blbl">Fees</div></div>
+    <div class="bn-item" id="bn-alerts" onclick="mNav('alerts')"><div class="bico">🔔</div><div class="blbl">Alerts</div><span class="mbdg" id="m-aBdg">0</span></div>
+    <div class="bn-item" id="bn-more" onclick="mNav('more')"><div class="bico">☰</div><div class="blbl">More</div></div>
+  </nav>
+  <button class="fab" id="m-fab" onclick="openAdd()">＋</button>
+</div>
+
+<!-- ════════ SHARED MODALS (desktop) ════════ -->
+<!-- Student modal -->
+<div class="mo" id="mStu">
+  <div class="modal wide">
+    <div class="mh"><h3 id="sMT">Add New Student</h3><button class="mc" onclick="CM('mStu')">×</button></div>
+    <div class="mb">
+      <!-- Photo capture -->
+      <div class="photo-capture">
+        <div class="photo-preview" id="photoPreview" onclick="openCam()">
+          <div class="ph-placeholder" id="photoPlaceholder">👤</div>
+          <div class="ph-overlay">📷</div>
+        </div>
+        <div class="photo-btns">
+          <button onclick="openCam()">📷 Camera</button>
+          <button onclick="document.getElementById('photoFileInput').click()">🖼 Upload</button>
+          <button onclick="clearPhoto()" id="clearPhotoBtn" style="display:none;color:var(--er);">✕ Remove</button>
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label>Full Name *</label><input class="fi" id="fn" placeholder="Student full name"></div>
+        <div class="fg"><label>Phone *</label><input class="fi" id="fph" type="tel" placeholder="10-digit mobile" maxlength="10"></div>
+        <div class="fg full"><label>Address</label><input class="fi" id="fadr" placeholder="Residential address"></div>
+        <div class="fg"><label>Father's Name</label><input class="fi" id="ffa" placeholder="Father's name"></div>
+        <div class="fg"><label>Emergency Contact *</label><input class="fi" id="fem" type="tel" placeholder="Emergency phone"></div>
+        <div class="fg"><label>Aadhar / Photo ID *</label><input class="fi" id="fid" placeholder="Aadhar number"></div>
+        <div class="fg"><label>Gender</label><select class="fs" id="fgen"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+        <div class="fg"><label>Purpose of Study</label><input class="fi" id="fpur" placeholder="e.g. UPSC, CA, NEET"></div>
+        <div class="fg"><label>Hall *</label><select class="fs" id="fhall" onchange="onHallChange()"><option value="">Select hall</option><option value="A">Hall A (31)</option><option value="B">Hall B (22)</option><option value="C">Hall C (21)</option><option value="D">Hall D (29)</option><option value="E">Hall E (29)</option></select></div>
+        <div class="fg"><label>Seat *</label><select class="fs" id="fst"><option value="">Select hall first</option></select></div>
+        <div class="fg"><label>Shift *</label><select class="fs" id="fsh" onchange="autoFee()"><option value="">Select shift</option><option value="morning">🌅 Morning (6AM–2PM)</option><option value="evening">🌆 Evening (2PM–10PM)</option><option value="fullday">☀️ Full Day (6AM–10PM)</option><option value="24hour">🌙 24 Hour (6AM–6AM)</option></select></div>
+        <div class="fg"><label>Monthly Fee (₹) *</label><input class="fi" id="ffe" type="number" placeholder="Auto-fills by shift" min="0"></div>
+        <div class="fg"><label>Join Date *</label><input class="fi" id="fjd" type="date"></div>
+        <div class="fg full"><label>Notes</label><input class="fi" id="fnt" placeholder="Additional notes"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="CM('mStu')">Cancel</button><button class="btn bp" onclick="saveStu()">Save Student</button></div>
+  </div>
+</div>
+<!-- Fee payment modal -->
+<div class="mo" id="mFee">
+  <div class="modal narrow">
+    <div class="mh"><h3 id="fMT">Record Payment</h3><button class="mc" onclick="CM('mFee')">×</button></div>
+    <div class="mb">
+      <div style="background:var(--sf2);border-radius:var(--rs);padding:11px;margin-bottom:13px;"><div style="font-weight:600;font-size:14px;" id="fMN"></div><div style="font-size:11px;color:var(--mt);margin-top:2px;" id="fMM"></div></div>
+      <div class="fg2">
+        <div class="fg"><label>Payment Month *</label><input class="fi" id="pm" type="month"></div>
+        <div class="fg"><label>Amount (₹) *</label><input class="fi" id="pa" type="number" placeholder="Amount"></div>
+        <div class="fg"><label>Mode</label><select class="fs" id="pmo"><option>Cash</option><option>UPI</option><option>Net Banking</option><option>Cheque</option></select></div>
+        <div class="fg"><label>Date</label><input class="fi" id="pd" type="date"></div>
+        <div class="fg full"><label>Remarks</label><input class="fi" id="pr" placeholder="Optional"></div>
+      </div>
+      <div style="margin-top:14px;"><div class="sec-lbl">Payment History</div><div id="fPH"></div></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="CM('mFee')">Cancel</button><button class="btn binf btn-sm" onclick="previewRx()">🧾 Receipt</button><button class="btn bsuc" onclick="savePay()">✓ Record</button></div>
+  </div>
+</div>
+<!-- Receipt modal -->
+<div class="mo" id="mRx">
+  <div class="modal narrow">
+    <div class="mh"><h3>🧾 Receipt</h3><button class="mc" onclick="CM('mRx')">×</button></div>
+    <div class="mb" id="rxBody"></div>
+    <div class="mf"><button class="btn bg" onclick="CM('mRx')">Close</button><button class="btn bp" onclick="printRx()">🖨 Print</button></div>
+  </div>
+</div>
+<!-- Detail modal -->
+<div class="mo" id="mDet">
+  <div class="modal wide">
+    <div class="mh"><h3>Student Profile</h3><button class="mc" onclick="CM('mDet')">×</button></div>
+    <div class="mb" id="detBody"></div>
+    <div class="mf"><button class="btn berr btn-sm" id="dDel">🗑 Remove</button><button class="btn bg" onclick="CM('mDet')">Close</button><button class="btn bg btn-sm" id="dRx">🧾 Last Receipt</button><button class="btn bp" id="dPay">💳 Pay</button></div>
+  </div>
+</div>
+<!-- Seat detail modal (desktop) -->
+<div class="mo" id="mSD">
+  <div class="modal">
+    <div class="mh"><h3 id="sd-title">Seat Info</h3><button class="mc" onclick="CM('mSD')">×</button></div>
+    <div class="mb" id="sd-body"></div>
+    <div class="mf"><button class="btn bg" onclick="CM('mSD')">Close</button></div>
+  </div>
+</div>
+
+<!-- MOBILE SHEETS -->
+<div class="sh-ov" id="sh-ov-mFeeM" onclick="closeSheet('mFeeM')"></div>
+<div class="sheet" id="mFeeM">
+  <div class="sh-handle"></div>
+  <div class="sh-hdr"><h3 id="fMT_m">Record Payment</h3><button class="sh-cls" onclick="closeSheet('mFeeM')">×</button></div>
+  <div class="sh-body">
+    <div style="background:var(--sf2);border-radius:10px;padding:11px;margin-bottom:13px;"><div style="font-weight:600;font-size:14px;" id="fMN_m"></div><div style="font-size:11px;color:var(--mt);margin-top:2px;" id="fMM_m"></div></div>
+    <div class="fg"><label>Month *</label><input class="fi" id="pm_m" type="month"></div>
+    <div class="fg"><label>Amount (₹) *</label><input class="fi" id="pa_m" type="number" inputmode="numeric"></div>
+    <div class="fg"><label>Mode</label><select class="fs" id="pmo_m"><option>Cash</option><option>UPI</option><option>Net Banking</option><option>Cheque</option></select></div>
+    <div class="fg"><label>Date</label><input class="fi" id="pd_m" type="date"></div>
+    <div class="fg"><label>Remarks</label><input class="fi" id="pr_m" placeholder="Optional"></div>
+    <div style="margin-top:13px;"><div class="sec-lbl">History</div><div id="fPH_m"></div></div>
+  </div>
+  <div class="sh-foot" style="flex-direction:column;gap:8px;">
+    <button class="btn bsuc btn-full" onclick="savePay()">✓ Record Payment</button>
+    <div style="display:flex;gap:8px;"><button class="btn binf btn-sm" style="flex:1;" onclick="previewRx()">🧾 Preview</button><button class="btn bg btn-sm" style="flex:1;" onclick="closeSheet('mFeeM')">Cancel</button></div>
+  </div>
+</div>
+<div class="sh-ov" id="sh-ov-mDetM" onclick="closeSheet('mDetM')"></div>
+<div class="sheet" id="mDetM">
+  <div class="sh-handle"></div>
+  <div class="sh-hdr"><h3>Student Profile</h3><button class="sh-cls" onclick="closeSheet('mDetM')">×</button></div>
+  <div class="sh-body" id="detBody_m"></div>
+  <div class="sh-foot" style="flex-direction:column;gap:8px;">
+    <div style="display:flex;gap:8px;"><button class="btn berr btn-sm" id="m-dDel">🗑 Remove</button><button class="btn bg btn-sm" id="m-dRx" style="flex:1;">🧾 Receipt</button><button class="btn bp" style="flex:2;" id="m-dPay">💳 Pay</button></div>
+    <button class="btn bg btn-full btn-sm" id="m-dEdit">✏️ Edit Student</button>
+  </div>
+</div>
+<div class="sh-ov" id="sh-ov-mRxM" onclick="closeSheet('mRxM')"></div>
+<div class="sheet" id="mRxM">
+  <div class="sh-handle"></div>
+  <div class="sh-hdr"><h3>🧾 Receipt</h3><button class="sh-cls" onclick="closeSheet('mRxM')">×</button></div>
+  <div class="sh-body" id="rxBody_m"></div>
+  <div class="sh-foot"><button class="btn bg" style="flex:1;" onclick="closeSheet('mRxM')">Close</button><button class="btn bp" style="flex:2;" onclick="printRx()">🖨 Print</button></div>
+</div>
+<div class="sh-ov" id="sh-ov-mStuM" onclick="closeSheet('mStuM')"></div>
+<div class="sheet" id="mStuM">
+  <div class="sh-handle"></div>
+  <div class="sh-hdr"><h3 id="sMT_m">Add New Student</h3><button class="sh-cls" onclick="closeSheet('mStuM')">×</button></div>
+  <div class="sh-body">
+    <div class="form-section"><h4>Personal Info</h4>
+      <!-- Photo capture mobile -->
+      <div class="photo-capture" style="margin-bottom:16px;">
+        <div class="photo-preview" id="photoPreview_m" onclick="openCam()">
+          <div class="ph-placeholder" id="photoPlaceholder_m">👤</div>
+          <div class="ph-overlay">📷</div>
+        </div>
+        <div class="photo-btns">
+          <button onclick="openCam()">📷 Camera</button>
+          <button onclick="document.getElementById('photoFileInput').click()">🖼 Upload</button>
+          <button onclick="clearPhoto()" id="clearPhotoBtn_m" style="display:none;color:var(--er);">✕ Remove</button>
+        </div>
+      </div>
+      <div class="fg"><label>Full Name *</label><input class="fi" id="fn_m" placeholder="Full name"></div>
+      <div class="fg"><label>Phone *</label><input class="fi" id="fph_m" type="tel" placeholder="10-digit mobile" maxlength="10"></div>
+      <div class="fg"><label>Father's Name</label><input class="fi" id="ffa_m" placeholder="Father's name"></div>
+      <div class="fg"><label>Emergency Contact *</label><input class="fi" id="fem_m" type="tel" placeholder="Emergency phone"></div>
+      <div class="fg"><label>Aadhar / Photo ID *</label><input class="fi" id="fid_m" placeholder="Aadhar number"></div>
+      <div class="fg"><label>Gender</label><select class="fs" id="fgen_m"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div class="fg"><label>Purpose</label><input class="fi" id="fpur_m" placeholder="UPSC, CA, NEET…"></div>
+      <div class="fg"><label>Address</label><input class="fi" id="fadr_m" placeholder="Residential address"></div>
+    </div>
+    <div class="form-section"><h4>Seat Assignment</h4>
+      <div class="fg"><label>Hall *</label><select class="fs" id="fhall_m" onchange="onHallChangeM()"><option value="">Select hall</option><option value="A">Hall A (31)</option><option value="B">Hall B (22)</option><option value="C">Hall C (21)</option><option value="D">Hall D (29)</option><option value="E">Hall E (29)</option></select></div>
+      <div class="fg"><label>Seat *</label><select class="fs" id="fst_m"><option value="">Select hall first</option></select></div>
+      <div class="fg"><label>Shift *</label><select class="fs" id="fsh_m" onchange="autoFeeM()"><option value="">Select shift</option><option value="morning">🌅 Morning (6AM–2PM)</option><option value="evening">🌆 Evening (2PM–10PM)</option><option value="fullday">☀️ Full Day (6AM–10PM)</option><option value="24hour">🌙 24 Hour (6AM–6AM)</option></select></div>
+    </div>
+    <div class="form-section"><h4>Fee & Enrollment</h4>
+      <div class="fg"><label>Monthly Fee (₹) *</label><input class="fi" id="ffe_m" type="number" inputmode="numeric" placeholder="Auto-fills by shift" min="0"></div>
+      <div class="fg"><label>Join Date *</label><input class="fi" id="fjd_m" type="date"></div>
+      <div class="fg"><label>Notes</label><input class="fi" id="fnt_m" placeholder="Notes"></div>
+    </div>
+  </div>
+  <div class="sh-foot"><button class="btn bg" style="flex:1;" onclick="closeSheet('mStuM')">Cancel</button><button class="btn bp" style="flex:2;" onclick="saveStuM()">Save Student</button></div>
+</div>
+<div class="sh-ov" id="sh-ov-mSDM" onclick="closeSheet('mSDM')"></div>
+<div class="sheet" id="mSDM">
+  <div class="sh-handle"></div>
+  <div class="sh-hdr"><h3 id="sdm-title">Seat</h3><button class="sh-cls" onclick="closeSheet('mSDM')">×</button></div>
+  <div class="sh-body" id="sdm-body"></div>
+  <div class="sh-foot"><button class="btn bg btn-full" onclick="closeSheet('mSDM')">Close</button></div>
+</div>
+
+<!-- Camera modal -->
+<div class="cam-modal" id="camModal">
+  <video class="cam-video" id="camVideo" autoplay playsinline muted></video>
+  <canvas class="cam-canvas" id="camCanvas"></canvas>
+  <div class="cam-controls">
+    <button class="cam-shoot" onclick="shootPhoto()" title="Take photo">📷</button>
+    <button class="cam-cancel" onclick="closeCam()">Cancel</button>
+  </div>
+  <div style="margin-top:12px;font-size:12px;color:var(--mt);">Position face in the circle then tap 📷</div>
+</div>
+<!-- Hidden file input for gallery upload -->
+<input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="onFileSelected(event)">
+<div class="toast" id="tst"></div>
+
+<script>
+// ════════════════════════════════════════
+//  CONFIG
+// ════════════════════════════════════════
+const HALLS={A:{seats:31,color:'#f5c842'},B:{seats:22,color:'#3ecf8e'},C:{seats:21,color:'#6c8ef5'},D:{seats:29,color:'#f5a623'},E:{seats:29,color:'#a855f7'}};
+const TOTAL_SEATS=Object.values(HALLS).reduce((s,h)=>s+h.seats,0);
+const SHIFTS_LIST=['morning','evening','fullday','24hour'];
+const SHIFT_BLOCKS={morning:[0,1],evening:[1,2],fullday:[0,2],'24hour':[0,3]};
+const SH={morning:'Morning',evening:'Evening',fullday:'Full Day','24hour':'24 Hour'};
+const ST={morning:'6AM–2PM',evening:'2PM–10PM',fullday:'6AM–10PM','24hour':'6AM–6AM'};
+const SABB={morning:'M',evening:'E',fullday:'F','24hour':'N'};
+const SCOL={morning:'var(--wn)',evening:'var(--inf)',fullday:'var(--ok)','24hour':'var(--pu)'};
+function shiftsConflict(a,b){const ba=SHIFT_BLOCKS[a],bb=SHIFT_BLOCKS[b];return ba[0]<bb[1]&&bb[0]<ba[1];}
+function getConflicting(sh){return SHIFTS_LIST.filter(s=>shiftsConflict(s,sh));}
+const sl=s=>SH[s]||s||'—';
+
+// ════════════════════════════════════════
+//  ⚙️  FIREBASE CONFIG — PASTE YOURS HERE
+//  1. Go to console.firebase.google.com
+//  2. Create project → Realtime Database → Test mode
+//  3. Project Settings → Web app → copy firebaseConfig
+// ════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyAykQKn4yZ4gpkyqM8bA7x2k3nAvLDhaAQ",
+  authDomain:        "studynest-299f5.firebaseapp.com",
+  databaseURL:       "https://studynest-299f5-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "studynest-299f5",
+  storageBucket:     "studynest-299f5.firebasestorage.app",
+  messagingSenderId: "188684957271",
+  appId:             "1:188684957271:web:eaf2fa27d163ee95191512"
+};
+// ════════════════════════════════════════
+
+// ════════════════════════════════════════
+//  DATA STORE — Firebase Realtime DB
+//  Falls back to localStorage if Firebase not configured
+// ════════════════════════════════════════
+let S  = [];
+let P  = [];
+let FC = {morning:800,evening:800,fullday:1400,'24hour':2000};
+let LI = {name:'Navmanthan Library',owner:'',address:'',phone:''};
+let eId=null,fSId=null,curRx=null,sTF='all',hTF='all',fTF='all',currentHV='all';
+let DB = null; // Firebase DB reference
+let _fbReady = false;
+
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+
+// ── Firebase helpers ──
+// Every record remembers the exact Firebase key it is stored under (_k),
+// so deletes always hit the real record — even old/duplicate ones.
+const _key   = o => o._k || o.id;
+const _clean = o => { const c = {...o}; delete c._k; return c; };
+const _fromDB = obj => obj ? Object.entries(obj).map(([k,v]) => ({...v, id: v.id || k, _k: k})) : [];
+
+function _saveLocal() {
+  localStorage.setItem('sn_students', JSON.stringify(S.map(_clean)));
+  localStorage.setItem('sn_payments', JSON.stringify(P.map(_clean)));
+  localStorage.setItem('sn_config',   JSON.stringify(FC));
+  localStorage.setItem('sn_library',  JSON.stringify(LI));
+}
+// Write ONLY the paths that changed. value null = delete that record.
+function dbWrite(updates) {
+  if (!DB) { _saveLocal(); return Promise.resolve(); }
+  return DB.ref().update(updates).catch(e => {
+    console.error('Save failed:', e);
+    toast('❌ Not saved to database: ' + (e.message || e), 'err');
+    throw e;
+  });
+}
+function persist() {
+  // Only settings are saved as a whole now; students/payments are saved one by one
+  return dbWrite({ config: FC, library: LI });
+}
+
+// ── Bootstrap Firebase or fallback ──
+function initFirebase() {
+  const configured = FIREBASE_CONFIG.databaseURL && !FIREBASE_CONFIG.databaseURL.includes('PASTE');
+  if (!configured) {
+    console.warn('StudyNest: Firebase not configured — using localStorage (single-device only)');
+    S  = JSON.parse(localStorage.getItem('sn_students') || localStorage.getItem('sn_s') || '[]');
+    P  = JSON.parse(localStorage.getItem('sn_payments') || localStorage.getItem('sn_p') || '[]');
+    FC = JSON.parse(localStorage.getItem('sn_config')   || localStorage.getItem('sn_fc') || '{"morning":800,"evening":800,"fullday":1400,"24hour":2000}');
+    LI = JSON.parse(localStorage.getItem('sn_library')  || localStorage.getItem('sn_li') || '{"name":"Navmanthan Library","owner":"","address":"","phone":""}');
+    _fbReady = true;
+    if (!localStorage.getItem('sn_seeded')) _seedData();
+    else _refreshAll();
+    return;
+  }
+
+  // Load Firebase SDKs dynamically
+  const loadScript = src => new Promise(res => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; document.head.appendChild(s);
+  });
+
+  showConnecting(true);
+  // If Firebase doesn't connect within 6 seconds, show a helpful message
+  const _connectTimeout = setTimeout(() => {
+    showConnecting(false);
+    const b = document.getElementById('_connectingBanner');
+    if(!_fbReady) {
+      const warn = document.createElement('div');
+      warn.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#ff5050;color:#fff;text-align:center;padding:9px;font-size:13px;font-weight:600;';
+      warn.innerHTML = '⚠️ Open this file directly in your browser (not inside Claude preview) for Firebase sync to work. <span onclick="this.parentElement.remove()" style="cursor:pointer;margin-left:12px;opacity:.7;">✕</span>';
+      document.body.appendChild(warn);
+    }
+  }, 6000);
+  Promise.all([
+    loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js'),
+    loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'),
+    loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js'),
+  ]).then(() => {
+    try {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      DB = firebase.database();
+      AUTH = firebase.auth();
+      clearTimeout(_connectTimeout);
+      showConnecting(false);
+
+      // Only load data after a user has logged in
+      AUTH.onAuthStateChanged(user => {
+        if (user) {
+          document.getElementById('loginScreen').classList.remove('show');
+          document.querySelectorAll('.acctEmail').forEach(el => el.textContent = user.email);
+          _startDataListener();
+        } else {
+          _stopDataListener();
+          S = []; P = []; _fbReady = false;
+          _refreshAll();
+          document.getElementById('loginScreen').classList.add('show');
+        }
+      });
+    } catch(e) {
+      console.error('Firebase init failed:', e);
+      showConnecting(false);
+      toast('Firebase error — check your config','err');
+    }
+  });
+}
+
+// ── Realtime data listener (runs only while logged in) ──
+function _stopDataListener() { if (DB) DB.ref('/').off(); }
+function _startDataListener() {
+  _stopDataListener();
+  showConnecting(true);
+  {
+    {
+      // Listen to ALL data in real time — any device change triggers re-render
+      DB.ref('/').on('value', snap => {
+        const d = snap.val() || {};
+        S  = _fromDB(d.students);
+        P  = _fromDB(d.payments);
+        FC = d.config   || {morning:800,evening:800,fullday:1400,'24hour':2000};
+        LI = d.library  || {name:'Navmanthan Library',owner:'',address:'',phone:''};
+        if (!_fbReady) {
+          _fbReady = true;
+          // Only seed if DB has never been seeded before (check the flag in Firebase)
+          if (!d._seeded) _seedData();
+          else _refreshAll();
+        } else {
+          _refreshAll();
+        }
+        showConnecting(false);
+      }, err => {
+        showConnecting(false);
+        console.error(err);
+        toast('❌ No permission to read data. Check Firebase rules / your UID.', 'err');
+      });
+    }
+  }
+}
+
+// ── Login / logout ──
+let AUTH = null;
+const _authMsg = e => ({
+  'auth/invalid-email':'Email address is not valid.',
+  'auth/user-not-found':'Wrong email or password.',
+  'auth/wrong-password':'Wrong email or password.',
+  'auth/invalid-credential':'Wrong email or password.',
+  'auth/invalid-login-credentials':'Wrong email or password.',
+  'auth/too-many-requests':'Too many attempts. Wait a few minutes and try again.',
+  'auth/network-request-failed':'No internet connection.',
+})[e.code] || e.message;
+
+function authLogin() {
+  const email = document.getElementById('lgEmail').value.trim();
+  const pass  = document.getElementById('lgPass').value;
+  const err = document.getElementById('loginErr'), btn = document.getElementById('lgBtn');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Enter email and password.'; return; }
+  btn.disabled = true; btn.textContent = 'Logging in…';
+  AUTH.signInWithEmailAndPassword(email, pass)
+    .then(() => { document.getElementById('lgPass').value = ''; })
+    .catch(e => { err.textContent = _authMsg(e); })
+    .finally(() => { btn.disabled = false; btn.textContent = 'Log in'; });
+}
+function authForgot() {
+  const email = document.getElementById('lgEmail').value.trim();
+  const err = document.getElementById('loginErr');
+  if (!email) { err.textContent = 'Type your email above first, then tap "Forgot password?".'; return; }
+  AUTH.sendPasswordResetEmail(email)
+    .then(() => { err.style.color = '#3ecf8e'; err.textContent = 'Reset link sent — check your email (and spam).'; setTimeout(()=>err.style.color='',6000); })
+    .catch(e => { err.textContent = _authMsg(e); });
+}
+function authResetPw() {
+  const u = AUTH && AUTH.currentUser; if (!u) return;
+  AUTH.sendPasswordResetEmail(u.email)
+    .then(() => toast('Password reset link sent to ' + u.email))
+    .catch(e => toast(_authMsg(e), 'err'));
+}
+function authLogout() {
+  if (!confirm('Log out of this device?')) return;
+  AUTH.signOut();
+}
+
+function _refreshAll() {
+  // Re-render whichever screen/page is active
+  const activeD = document.querySelector('.d-page.active')?.id?.replace('dp-','');
+  const activeM = document.querySelector('.m-screen.active')?.id?.replace('ms-','');
+  if(activeD==='dashboard'||activeM==='dashboard') rdash();
+  if(activeD==='students'||activeM==='students') renderStudents();
+  if(activeD==='fees'||activeM==='fees') renderFees();
+  if(activeD==='alerts'||activeM==='alerts') renderAlerts();
+  if(activeD==='seats'||activeM==='halls') renderHalls(currentHV, isMobile()?'m':'d');
+  if(activeD==='reports'||activeM==='more') renderReport();
+  renderSettings();
+  ['d-aBdg','m-aBdg'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=S.filter(s=>fStat(s)!=='paid').length;});
+}
+
+function showConnecting(on) {
+  let el = document.getElementById('_connectingBanner');
+  if (on) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = '_connectingBanner';
+      el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#f5c842;color:#0b0b10;text-align:center;padding:7px;font-size:12px;font-weight:600;';
+      el.textContent = '⏳ Connecting to database…';
+      document.body.appendChild(el);
+    }
+  } else {
+    if (el) el.remove();
+  }
+}
+const fmt=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+const fmtM=m=>{if(!m)return'—';const[y,mo]=m.split('-');return new Date(y,mo-1).toLocaleDateString('en-IN',{month:'long',year:'numeric'});};
+const cm=()=>new Date().toISOString().slice(0,7);
+const INR=n=>'₹'+(n||0).toLocaleString('en-IN');
+const COLS=['#f5c842','#ff5050','#3ecf8e','#6c8ef5','#f5a623','#a855f7','#ec4899','#22c55e','#06b6d4','#f97316'];
+const aCol=n=>{let h=0;for(let c of(n||'?'))h=((h<<5)-h)+c.charCodeAt(0);return COLS[Math.abs(h)%COLS.length];};
+const ini=n=>(n||'?').split(' ').slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
+const getPays=id=>P.filter(p=>p.sid===id).sort((a,b)=>b.month.localeCompare(a.month));
+const mPaid=(id,m)=>P.filter(p=>p.sid===id&&p.month===m).reduce((s,p)=>s+p.amt,0);
+const fStat=(s,m)=>{m=m||cm();const p=mPaid(s.id,m);if(p>=s.fee)return'paid';if(p>0)return'partial';return'due';};
+const sL=(h,s)=>`${h}-${s}`;
+function getSeatSlotsFree(hall){const info=HALLS[hall];let f=0;for(let seat=1;seat<=info.seats;seat++){const taken=S.filter(s=>s.hall===hall&&s.seat===seat).map(s=>s.shift);for(const sh of SHIFTS_LIST){if(!taken.some(t=>shiftsConflict(t,sh)))f++;}}return f;}
+function toast(msg,t='ok'){const el=document.getElementById('tst');el.className='toast show '+t;el.innerHTML=(t==='ok'?'✅':'❌')+' '+msg;setTimeout(()=>el.className='toast',3000);}
+const isMobile=()=>window.innerWidth<768;
+
+// ════════════════════════════════════════
+//  NAV
+// ════════════════════════════════════════
+const DPT={dashboard:'Dashboard',students:'Students',fees:'Fee Records',alerts:'Due Alerts',seats:'Hall & Seat Map',reports:'Monthly Reports',settings:'Settings'};
+const MPT={dashboard:'Dashboard',students:'Students',halls:'Hall Map',fees:'Fee Records',alerts:'Due Alerts',more:'Reports & Settings'};
+function dNav(p){
+  document.querySelectorAll('.d-page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
+  document.getElementById('dp-'+p).classList.add('active');
+  document.querySelectorAll('.ni').forEach(x=>{if(x.getAttribute('onclick')?.includes("'"+p+"'"))x.classList.add('active');});
+  document.getElementById('d-pgTitle').textContent=DPT[p]||p;
+  if(p==='dashboard')rdash();
+  if(p==='students')renderStudents();
+  if(p==='fees'){document.getElementById('d-fMP').value=cm();renderFees();}
+  if(p==='alerts')renderAlerts();
+  if(p==='seats'){setHallView('all',null,'d');}
+  if(p==='reports'){document.getElementById('d-rM').value=cm();renderReport();}
+  if(p==='settings')renderSettings();
+}
+function mNav(p){
+  document.querySelectorAll('.m-screen').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.bn-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('ms-'+p).classList.add('active');
+  const bn=document.getElementById('bn-'+p);if(bn)bn.classList.add('active');
+  document.getElementById('m-pgTitle').textContent=MPT[p]||p;
+  const tb=document.getElementById('m-topBtn');
+  tb.style.display=(p==='dashboard'||p==='students')?'block':'none';
+  const fab=document.getElementById('m-fab');
+  fab.style.display=(p==='dashboard'||p==='students')?'flex':'none';
+  if(p==='dashboard')rdash();
+  if(p==='students')renderStudents();
+  if(p==='halls'){setHallView('all',null,'m');}
+  if(p==='fees'){document.getElementById('m-fMP').value=cm();renderFees();}
+  if(p==='alerts')renderAlerts();
+  if(p==='more'){document.getElementById('m-rM').value=cm();renderReport();renderSettings();}
+  document.getElementById('ms-'+p)?.scrollTo(0,0);
+}
+
+// ════════════════════════════════════════
+//  SHEETS (mobile)
+// ════════════════════════════════════════
+function openSheet(id){document.getElementById('sh-ov-'+id).classList.add('open');requestAnimationFrame(()=>requestAnimationFrame(()=>document.getElementById(id).classList.add('open')));}
+function closeSheet(id){document.getElementById(id).classList.remove('open');setTimeout(()=>document.getElementById('sh-ov-'+id).classList.remove('open'),320);}
+document.querySelectorAll('.sheet').forEach(sheet=>{
+  let sy=0;
+  sheet.addEventListener('touchstart',e=>{sy=e.touches[0].clientY;},{passive:true});
+  sheet.addEventListener('touchmove',e=>{const dy=e.touches[0].clientY-sy;const body=sheet.querySelector('.sh-body');if(dy>0&&(!body||body.scrollTop<=0))sheet.style.transform=`translateY(${Math.min(dy*.5,120)}px)`;},{passive:true});
+  sheet.addEventListener('touchend',e=>{sheet.style.transform='';if(e.changedTouches[0].clientY-sy>80)closeSheet(sheet.id);});
+});
+const CM=id=>document.getElementById(id).classList.remove('open');
+window.addEventListener('click',e=>{if(e.target.classList.contains('mo'))e.target.classList.remove('open');});
+
+// ════════════════════════════════════════
+//  DASHBOARD (writes to both desktop + mobile)
+// ════════════════════════════════════════
+function rdash(){
+  const m=cm(),rev=P.filter(p=>p.month===m).reduce((s,p)=>s+p.amt,0);
+  const due=S.filter(s=>fStat(s)!=='paid').length,paid=S.filter(s=>fStat(s)==='paid').length;
+  let blockedSlots=0;S.forEach(s=>blockedSlots+=getConflicting(s.shift).length);
+  const freeSlots=TOTAL_SEATS*4-blockedSlots;
+  // Desktop
+  ['d-st0','m-st0'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=S.length;});
+  ['d-st1','m-st1'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=due;});
+  ['d-st2','m-st2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=paid;});
+  ['d-st2s','m-st2s'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=INR(rev)+' collected';});
+  ['d-st3','m-st3'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=S.length;});
+  ['d-st3s','m-st3s'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='of '+TOTAL_SEATS+' seats';});
+  if(document.getElementById('d-st4'))document.getElementById('d-st4').textContent=freeSlots;
+  ['d-aBdg','m-aBdg'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=due;});
+
+  const hallStripHTML=Object.entries(HALLS).map(([h,info])=>{
+    const stu=S.filter(s=>s.hall===h),d=stu.filter(s=>fStat(s)!=='paid').length;
+    return `<div style="flex-shrink:0;background:var(--sf);border:1px solid var(--bd);border-top:3px solid ${info.color};border-radius:10px;padding:10px 12px;min-width:85px;cursor:pointer;" onclick="${isMobile()?'mNav(\'halls\')':'dNav(\'seats\')'}">
+      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;">Hall ${h}</div>
+      <div style="font-family:'Syne';font-size:20px;font-weight:800;color:${info.color};">${stu.length}<span style="font-size:10px;color:var(--mt);font-weight:400;">/${info.seats}</span></div>
+      ${d>0?`<div style="font-size:9.5px;color:var(--er);">${d} due</div>`:`<div style="font-size:9.5px;color:var(--ok);">all good</div>`}
+    </div>`;}).join('');
+  // Desktop hall strip (5-col grid)
+  const dHS=document.getElementById('d-hallStrip');
+  if(dHS)dHS.innerHTML=Object.entries(HALLS).map(([h,info])=>{const stu=S.filter(s=>s.hall===h),d=stu.filter(s=>fStat(s)!=='paid').length;return`<div class="stat-card" style="border-top:3px solid ${info.color};cursor:pointer;" onclick="dNav('seats')"><div class="stat-lbl">Hall ${h}</div><div class="stat-val" style="font-size:21px;">${stu.length}<span style="font-size:12px;color:var(--mt);font-weight:400;">/${info.seats}</span></div><div class="stat-sub">${getSeatSlotsFree(h)} slots free · <span style="color:var(--er);">${d} due</span></div></div>`;}).join('');
+  const mHS=document.getElementById('m-hallStrip');if(mHS)mHS.innerHTML=hallStripHTML;
+
+  const dueL=S.filter(s=>fStat(s)!=='paid').slice(0,5);
+  const alertsHTML=!dueL.length?'<div style="text-align:center;padding:18px;color:var(--dm);font-size:13px;">✨ All fees cleared!</div>':
+    dueL.map(s=>{const st=fStat(s),p=mPaid(s.id,m);return`<div class="list-item" onclick="openDet('${s.id}')"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:34px;height:34px;font-size:11px;">${ini(s.name)}</div><div class="li-info"><div class="li-name">${s.name}</div><div class="li-sub">Hall ${s.hall}-${s.seat} · ${INR(s.fee-p)} due</div></div><span class="tag tag-${st}">${st.toUpperCase()}</span></div>`;}).join('');
+  ['d-dashAlerts','m-dashAlerts'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=alertsHTML;});
+
+  const rec=[...S].sort((a,b)=>(b.joinDate||'').localeCompare(a.joinDate||'')).slice(0,5);
+  const recentHTML=!rec.length?'<div style="text-align:center;padding:18px;color:var(--dm);">No students yet.</div>':
+    rec.map(s=>`<div class="list-item" onclick="openDet('${s.id}')"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:34px;height:34px;font-size:11px;">${ini(s.name)}</div><div class="li-info"><div class="li-name">${s.name}</div><div class="li-sub">Hall ${s.hall}-${s.seat} · ${fmt(s.joinDate)}</div></div><span class="tag tag-h${s.hall}">Hall ${s.hall}</span></div>`).join('');
+  ['d-dashRecent','m-dashRecent'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=recentHTML;});
+}
+
+// ════════════════════════════════════════
+//  STUDENTS
+// ════════════════════════════════════════
+function setSTab(v,el){sTF=v;el.closest('.tabs,.chips')?.querySelectorAll('.tab,.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderStudents();}
+function setHTab(v,el){hTF=v;el.closest('.tabs,.chips')?.querySelectorAll('.tab,.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderStudents();}
+
+function renderStudents(){
+  const q=(document.getElementById('d-ss')?.value||document.getElementById('m-ss')?.value||'').toLowerCase();
+  const list=S.filter(s=>(sTF==='all'||s.shift===sTF)&&(hTF==='all'||s.hall===hTF)&&(s.name.toLowerCase().includes(q)||(s.phone||'').includes(q)||String(s.seat||'').includes(q)||(s.id_no||'').includes(q)));
+  // Desktop table
+  const dte=document.getElementById('d-sTbl');
+  if(dte){
+    if(!list.length){dte.innerHTML='<div style="text-align:center;padding:36px;color:var(--dm);">No students found.</div>';}
+    else dte.innerHTML=`<table><thead><tr><th>Student</th><th>Hall</th><th>Seat</th><th>Shift</th><th>Aadhar/ID</th><th>Emergency</th><th>Fee/Mo</th><th>Joined</th><th>Status</th><th></th></tr></thead><tbody>${list.map(s=>{const st=fStat(s);return`<tr><td><div class="si"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:32px;height:32px;font-size:11px;">${ini(s.name)}</div><div><div class="sn">${s.name}</div><div class="sp">${s.phone||'—'}</div></div></div></td><td><span class="tag tag-h${s.hall}">Hall ${s.hall}</span></td><td><div class="seat-bdg"><div class="hall-dot" style="background:${HALLS[s.hall]?.color};"></div>${sL(s.hall,s.seat)}</div></td><td><span class="tag tag-${s.shift}">${sl(s.shift)}</span></td><td style="font-size:11px;color:var(--mt);">${s.id_no||'—'}</td><td style="font-size:11px;color:var(--mt);">${s.emergency||'—'}</td><td style="font-family:'Syne';font-weight:700;">${INR(s.fee)}</td><td style="font-size:11px;">${fmt(s.joinDate)}</td><td><span class="tag tag-${st}">${st.toUpperCase()}</span></td><td style="white-space:nowrap;"><button class="btn bg btn-xs" onclick="openDet('${s.id}')">👁</button> <button class="btn bsuc btn-xs" onclick="openFee('${s.id}')">💳</button> <button class="btn bg btn-xs" onclick="openEdit('${s.id}')">✏️</button></td></tr>`;}).join('')}</tbody></table>`;
+  }
+  // Mobile list
+  const mle=document.getElementById('m-stuList');
+  if(mle){
+    if(!list.length){mle.innerHTML='<div style="text-align:center;padding:40px;color:var(--dm);">No students found.</div>';}
+    else mle.innerHTML=`<div class="card">${list.map(s=>{const st=fStat(s);return`<div class="list-item" onclick="openDet('${s.id}')"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:38px;height:38px;font-size:12px;">${ini(s.name)}</div><div class="li-info"><div class="li-name">${s.name}</div><div class="li-sub"><span class="tag tag-h${s.hall}" style="font-size:8.5px;">Hall ${s.hall}</span> Seat ${s.seat} · ${sl(s.shift)} · ${s.phone||'—'}</div></div><div class="li-right"><span class="tag tag-${st}">${st.toUpperCase()}</span><div style="font-family:'Syne';font-weight:700;font-size:12px;margin-top:2px;">${INR(s.fee)}<span style="font-size:9px;color:var(--mt);font-weight:400;">/mo</span></div></div></div>`;}).join('')}</div>`;
+  }
+}
+
+// ════════════════════════════════════════
+//  FEES
+// ════════════════════════════════════════
+function setFTab(v,el){fTF=v;el.closest('.tabs,.chips')?.querySelectorAll('.tab,.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderFees();}
+function renderFees(){
+  const m=(document.getElementById('d-fMP')?.value||document.getElementById('m-fMP')?.value||cm());
+  ['d-fML','m-fML'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmtM(m);});
+  const list=S.filter(s=>fTF==='all'||fStat(s,m)===fTF);
+  // Desktop
+  const dte=document.getElementById('d-fTbl');
+  if(dte){
+    if(!list.length){dte.innerHTML='<div style="text-align:center;padding:36px;color:var(--dm);">No records.</div>';}
+    else dte.innerHTML=`<table><thead><tr><th>Student</th><th>Hall/Seat</th><th>Shift</th><th>Fee</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody>${list.map(s=>{const st=fStat(s,m),p=mPaid(s.id,m),b=s.fee-p,pct=Math.min(100,Math.round(p/s.fee*100));return`<tr><td><div class="si"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:28px;height:28px;font-size:9px;">${ini(s.name)}</div><div><div class="sn">${s.name}</div><div class="sp">${s.phone||'—'}</div></div></div></td><td><span class="tag tag-h${s.hall}">Hall ${s.hall}</span><br><span style="font-size:10.5px;color:var(--mt);">Seat ${s.seat}</span></td><td><span class="tag tag-${s.shift}">${sl(s.shift)}</span></td><td style="font-family:'Syne';font-weight:700;">${INR(s.fee)}</td><td><span style="font-family:'Syne';font-weight:700;color:${p>=s.fee?'var(--ok)':p>0?'var(--wn)':'var(--er)'};">${INR(p)}</span>${p>0&&p<s.fee?`<div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:var(--wn);"></div></div>`:''}</td><td style="font-family:'Syne';color:${b>0?'var(--er)':'var(--ok)'};">${b>0?INR(b):'—'}</td><td><span class="tag tag-${st}">${st.toUpperCase()}</span></td><td><button class="btn bsuc btn-xs" onclick="openFee('${s.id}')">💳</button></td></tr>`;}).join('')}</tbody></table>`;
+  }
+  // Mobile
+  const mle=document.getElementById('m-feeList');
+  if(mle){
+    if(!list.length){mle.innerHTML='<div style="text-align:center;padding:40px;color:var(--dm);">No records.</div>';}
+    else mle.innerHTML=`<div class="card">${list.map(s=>{const st=fStat(s,m),p=mPaid(s.id,m),b=s.fee-p,pct=Math.min(100,Math.round(p/s.fee*100));return`<div class="list-item" onclick="openFee('${s.id}')"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:36px;height:36px;font-size:11px;">${ini(s.name)}</div><div class="li-info"><div class="li-name">${s.name}</div><div class="li-sub">Hall ${s.hall}-${s.seat} · ${sl(s.shift)}</div>${p>0&&p<s.fee?`<div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:var(--wn);"></div></div>`:''}</div><div class="li-right"><span class="tag tag-${st}">${st.toUpperCase()}</span><div style="font-family:'Syne';font-weight:700;font-size:12px;color:${b>0?'var(--er)':'var(--ok)'};margin-top:2px;">${b>0?INR(b)+' due':'Paid'}</div></div></div>`;}).join('')}</div>`;
+  }
+}
+
+// ════════════════════════════════════════
+//  ALERTS
+// ════════════════════════════════════════
+function renderAlerts(){
+  const m=cm();
+  const list=S.filter(s=>fStat(s)!=='paid').sort((a,b)=>fStat(a)==='due'&&fStat(b)!=='due'?-1:fStat(b)==='due'&&fStat(a)!=='due'?1:0);
+  ['d-aBdg','m-aBdg'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=list.length;});
+  const html=!list.length?'<div style="text-align:center;padding:44px;color:var(--dm);font-size:14px;">✅ All paid this month!</div>':
+    list.map(s=>{const st=fStat(s,m),p=mPaid(s.id,m),b=s.fee-p;return`<div class="al-item ${st==='partial'?'w':''}"><div class="al-top"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:40px;height:40px;font-size:13px;">${ini(s.name)}</div><div style="flex:1;"><div class="al-name">${s.name}</div><span class="tag tag-${st}">${st.toUpperCase()}</span></div><div style="text-align:right;"><div style="font-family:'Syne';font-weight:800;font-size:17px;color:${st==='partial'?'var(--wn)':'var(--er)'};">${INR(b)}</div><div style="font-size:9.5px;color:var(--mt);">${fmtM(m)}</div></div></div><div class="al-meta">📞 ${s.phone||'—'} · 🏛 Hall ${s.hall} Seat ${s.seat} · ${sl(s.shift)} (${ST[s.shift]||''})<br>👨 ${s.father||'—'} · 🆘 ${s.emergency||'—'} · 🪪 ${s.id_no||'—'}<br>📖 ${s.purpose||'Student'}${st==='partial'?'<br>Paid: '+INR(p)+' of '+INR(s.fee):''}</div><div class="al-bottom"><button class="btn bg btn-xs" onclick="openDet('${s.id}')">👁 Profile</button><button class="btn bsuc btn-sm" onclick="openFee('${s.id}')">💳 Collect ${INR(b)}</button></div></div>`;}).join('');
+  ['d-aList','m-aList'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html;});
+}
+
+// ════════════════════════════════════════
+//  HALL MAP
+// ════════════════════════════════════════
+function setHallView(v,el,ui){
+  currentHV=v;
+  const chipGroup=ui==='m'?'#m-hallViewChips .chip':'#dp-seats .tabs .tab';
+  document.querySelectorAll(chipGroup).forEach(c=>c.classList.remove('active'));
+  if(el)el.classList.add('active');
+  else document.querySelector(chipGroup)?.classList.add('active');
+  renderHalls(v,ui||(isMobile()?'m':'d'));
+}
+function renderHalls(filter,ui){
+  ui=ui||(isMobile()?'m':'d');
+  const shiftFilter=(ui==='d'?document.getElementById('d-seatSF')?.value:null)||'all';
+  const halls=filter==='all'?Object.keys(HALLS):[filter];
+  let totalStu=0,totalFree=0;
+  const html=halls.map(h=>{
+    const info=HALLS[h];
+    const seatMap={};S.filter(s=>s.hall===h).forEach(s=>{if(!seatMap[s.seat])seatMap[s.seat]={};seatMap[s.seat][s.shift]=s;});
+    const stuCount=S.filter(s=>s.hall===h).length;
+    const freeSlots=getSeatSlotsFree(h);
+    const dueCount=S.filter(s=>s.hall===h&&fStat(s)!=='paid').length;
+    totalStu+=stuCount;totalFree+=freeSlots;
+    let seatsHtml='';
+    for(let i=1;i<=info.seats;i++){
+      const occ=seatMap[i]||{};
+      const blocked=new Set();Object.keys(occ).forEach(sh=>getConflicting(sh).forEach(cs=>blocked.add(cs)));
+      const anyOcc=Object.keys(occ).length>0,hasDue=Object.values(occ).some(stu=>fStat(stu)!=='paid');
+      let cls='avail';if(anyOcc&&hasDue)cls='occ-due';else if(anyOcc)cls='occ';
+      const showShifts=shiftFilter==='all'?SHIFTS_LIST:[shiftFilter];
+      const dots=showShifts.map(sh=>{const stu=occ[sh];
+        if(stu){const fs=fStat(stu),dc=fs==='paid'?SCOL[sh]:'var(--er)';return`<div class="sdot" style="background:${dc}22;border:1px solid ${dc};color:${dc};" onclick="event.stopPropagation();showSD('${stu.id}','${ui}')" title="${stu.name}">${SABB[sh]}</div>`;}
+        else if(blocked.has(sh))return`<div class="sdot" style="background:var(--sf2);border:1px solid var(--bd);color:var(--dm);" title="${sl(sh)} blocked">✕</div>`;
+        else return`<div class="sdot" style="background:var(--sf3);border:1px solid var(--bd);color:var(--dm);" onclick="event.stopPropagation();quickAdd('${h}',${i},'${sh}')" title="${sl(sh)} free">${SABB[sh]}</div>`;
+      }).join('');
+      seatsHtml+=`<div class="mseat ${cls} hall-${h}" onclick="showSD_seat('${h}',${i},'${ui}')" title="Seat ${sL(h,i)}"><div class="msno">${sL(h,i)}</div><div class="sdots">${dots}</div></div>`;
+    }
+    return`<div class="hall-block hall-${h}"><div class="hall-hdr" style="background:${info.color}18;"><div style="width:9px;height:9px;border-radius:50%;background:${info.color};"></div><h4 style="color:${info.color};">Hall ${h}</h4><span class="hs">${stuCount}/${info.seats}</span><span class="hs" style="color:var(--ok);">${freeSlots} free</span>${dueCount>0?`<span class="hs" style="color:var(--er);">${dueCount} due</span>`:''}</div><div class="hall-seats-wrap">${seatsHtml}</div></div>`;
+  }).join('');
+  if(ui==='d'){const el=document.getElementById('d-hallMap');if(el)el.innerHTML=`<div style="padding:10px;">${html}</div>`;const ss=document.getElementById('d-seatStat');if(ss)ss.textContent=`${totalStu} students · ${totalFree} shift-slots free`;document.getElementById('d-seatDetCard').style.display='none';}
+  else{const el=document.getElementById('m-hallMap');if(el)el.innerHTML=html;}
+}
+function showSD(id,ui){const s=S.find(x=>x.id===id);if(s)showSD_seat(s.hall,s.seat,ui);}
+function showSD_seat(hall,seat,ui){
+  const allOnSeat=S.filter(x=>x.hall===hall&&x.seat===seat);
+  const title=`Hall ${hall} · Seat ${sL(hall,seat)}`;
+  let html=allOnSeat.map((stu,idx)=>{const st=fStat(stu);
+    return`${idx>0?'<div style="height:1px;background:var(--bd);margin:11px 0;"></div>':''}<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><div class="av" style="background:${aCol(stu.name)}22;color:${aCol(stu.name)};width:34px;height:34px;font-size:11px;">${ini(stu.name)}</div><div style="flex:1;"><div style="font-weight:600;font-size:13.5px;">${stu.name}</div><div style="font-size:11px;color:var(--mt);">${stu.phone||'—'}</div></div><span class="tag tag-${stu.shift}">${sl(stu.shift)}</span><span class="tag tag-${st}">${st.toUpperCase()}</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:9px;"><div><div style="font-size:8.5px;font-weight:700;color:var(--dm);text-transform:uppercase;">Fee</div>${INR(stu.fee)}/mo</div><div><div style="font-size:8.5px;font-weight:700;color:var(--dm);text-transform:uppercase;">Emergency</div>${stu.emergency||'—'}</div></div><div style="display:flex;gap:7px;"><button class="btn bsuc btn-xs" onclick="${ui==='m'?`closeSheet('mSDM');`:`CM('mSD');`}openFee('${stu.id}')">💳 Pay</button><button class="btn bg btn-xs" onclick="${ui==='m'?`closeSheet('mSDM');`:`CM('mSD');`}openDet('${stu.id}')">👁</button><button class="btn bg btn-xs" onclick="${ui==='m'?`closeSheet('mSDM');`:`CM('mSD');`}openEdit('${stu.id}')">✏️</button></div>`;
+  }).join('');
+  html+='<div style="height:1px;background:var(--bd);margin:11px 0;"></div><div style="display:flex;gap:5px;flex-wrap:wrap;">';
+  SHIFTS_LIST.forEach(sh=>{const stu2=allOnSeat.find(x=>x.shift===sh),blk=!stu2&&allOnSeat.some(x=>shiftsConflict(x.shift,sh));
+    if(stu2)html+=`<span class="tag tag-${sh}">${sl(sh)}: ${stu2.name}</span>`;
+    else if(blk)html+=`<span class="tag" style="background:var(--sf2);color:var(--dm);">${sl(sh)}: Blocked</span>`;
+    else html+=`<span class="tag" style="background:var(--okd);color:var(--ok);cursor:pointer;" onclick="${ui==='m'?`closeSheet('mSDM');`:`CM('mSD');`}quickAdd('${hall}',${seat},'${sh}')">+ ${sl(sh)}</span>`;
+  });
+  html+='</div>';
+  if(ui==='m'){document.getElementById('sdm-title').textContent=title;document.getElementById('sdm-body').innerHTML=html;openSheet('mSDM');}
+  else{document.getElementById('sd-title').textContent=title;document.getElementById('sd-body').innerHTML=html;document.getElementById('mSD').classList.add('open');}
+}
+
+// ════════════════════════════════════════
+//  REPORTS
+// ════════════════════════════════════════
+function renderReport(){
+  const m=(document.getElementById('d-rM')?.value||document.getElementById('m-rM')?.value||cm());
+  const mP=P.filter(p=>p.month===m),rev=mP.reduce((s,p)=>s+p.amt,0);
+  const paidL=S.filter(s=>fStat(s,m)==='paid'),dueL=S.filter(s=>fStat(s,m)!=='paid');
+  const outstanding=dueL.reduce((s,st)=>s+(st.fee-mPaid(st.id,m)),0),expected=S.reduce((s,st)=>s+st.fee,0);
+  const rStatsHTML=`<div class="rc"><div class="rl">Expected</div><div class="rv">${INR(expected)}</div></div><div class="rc"><div class="rl">Collected</div><div class="rv" style="color:var(--ok);">${INR(rev)}</div></div><div class="rc"><div class="rl">Outstanding</div><div class="rv" style="color:var(--er);">${INR(outstanding)}</div></div><div class="rc"><div class="rl">Paid Students</div><div class="rv">${paidL.length}</div></div><div class="rc"><div class="rl">Due Students</div><div class="rv" style="color:var(--er);">${dueL.length}</div></div><div class="rc"><div class="rl">Collection %</div><div class="rv">${expected?Math.round(rev/expected*100):0}%</div></div>`;
+  ['d-rStats','m-rStats'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=rStatsHTML;});
+  const rHallsHTML=Object.entries(HALLS).map(([h,info])=>{const stu=S.filter(s=>s.hall===h),hRev=mP.filter(p=>stu.some(s=>s.id===p.sid)).reduce((s,p)=>s+p.amt,0),hDue=stu.filter(s=>fStat(s,m)!=='paid').length;return`<div class="rc" style="border-top:3px solid ${info.color};"><div class="rl">Hall ${h}</div><div class="rv" style="font-size:16px;">${INR(hRev)}</div><div style="font-size:10px;color:var(--mt);margin-top:2px;">${stu.length} students · <span style="color:var(--er);">${hDue} due</span></div></div>`;}).join('');
+  ['d-rHalls','m-rHalls'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=rHallsHTML;});
+  const paidHTML=!paidL.length?'<div style="padding:14px;text-align:center;color:var(--dm);">None paid yet.</div>':paidL.map(s=>{const pays=mP.filter(p=>p.sid===s.id),tot=pays.reduce((x,p)=>x+p.amt,0);return`<div class="list-item"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:30px;height:30px;font-size:9px;">${ini(s.name)}</div><div class="li-info"><div class="li-name" style="font-size:12.5px;">${s.name}</div><div class="li-sub">Hall ${s.hall} · Seat ${s.seat}</div></div><div style="font-family:'Syne';font-weight:700;color:var(--ok);">${INR(tot)}</div></div>`;}).join('');
+  ['d-rPaid','m-rPaid'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=paidHTML;});
+  const dueHTML=!dueL.length?'<div style="padding:14px;text-align:center;color:var(--dm);">✅ All paid!</div>':dueL.map(s=>{const b=s.fee-mPaid(s.id,m);return`<div class="list-item"><div class="av" style="background:${aCol(s.name)}22;color:${aCol(s.name)};width:30px;height:30px;font-size:9px;">${ini(s.name)}</div><div class="li-info"><div class="li-name" style="font-size:12.5px;">${s.name}</div><div class="li-sub">${s.phone||'—'} · Hall ${s.hall}</div></div><div style="font-family:'Syne';font-weight:700;color:var(--er);">${INR(b)}</div></div>`;}).join('');
+  ['d-rDue','m-rDue'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=dueHTML;});
+}
+function printReport(){
+  const m=(document.getElementById('d-rM')?.value||document.getElementById('m-rM')?.value||cm());
+  const mP=P.filter(p=>p.month===m),rev=mP.reduce((s,p)=>s+p.amt,0);
+  const paidL=S.filter(s=>fStat(s,m)==='paid'),dueL=S.filter(s=>fStat(s,m)!=='paid');
+  const outstanding=dueL.reduce((s,st)=>s+(st.fee-mPaid(st.id,m)),0),expected=S.reduce((s,st)=>s+st.fee,0);
+  document.getElementById('rxPrint').innerHTML=`<h2>${LI.name||'StudyNest'}</h2><div class="rsub">${LI.address||''} ${LI.phone?'· '+LI.phone:''}</div><h3 style="text-align:center;margin-bottom:12px;">Monthly Report — ${fmtM(m)}</h3><div class="rr"><span>Expected</span><span>${INR(expected)}</span></div><div class="rr"><span>Collected</span><span>${INR(rev)}</span></div><div class="rr tot"><span>Outstanding</span><span>${INR(outstanding)}</span></div><br>${Object.keys(HALLS).map(h=>{const stu=S.filter(s=>s.hall===h),hRev=mP.filter(p=>stu.some(s=>s.id===p.sid)).reduce((s,p)=>s+p.amt,0);return`<div class="rr"><span>Hall ${h} (${stu.length})</span><span>${INR(hRev)}</span></div>`;}).join('')}<br><h4>Due Students</h4>${dueL.map(s=>`<div class="rr"><span>${s.name} — Hall ${s.hall}-${s.seat} (${s.phone||'N/A'})</span><span>${INR(s.fee-mPaid(s.id,m))}</span></div>`).join('')}<div class="rft">${LI.owner?'Manager: '+LI.owner+'<br>':''}Printed: ${new Date().toLocaleDateString('en-IN')}</div>`;
+  window.print();
+}
+
+// ════════════════════════════════════════
+//  SETTINGS
+// ════════════════════════════════════════
+function renderSettings(){
+  const cfgHTML=Object.keys(SH).map(k=>`<div class="fee-cfg-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span class="tag tag-${k}">${SH[k]}</span><span style="font-size:10px;color:var(--mt);">${ST[k]}</span></div><div class="fg" style="margin:0;"><label>Monthly Fee (₹)</label><input class="fi" id="fc_${k}" type="number" inputmode="numeric" value="${FC[k]||0}" min="0"></div></div>`).join('');
+  ['d-feeCfg','m-feeCfg'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=cfgHTML;});
+  [['d-lN','m-lN'],['d-lO','m-lO'],['d-lA','m-lA'],['d-lP','m-lP']].forEach(([da,ma],i)=>{const keys=['name','owner','address','phone'];const v=LI[keys[i]]||'';const de=document.getElementById(da),me=document.getElementById(ma);if(de)de.value=v;if(me)me.value=v;});
+}
+function saveFees(){
+  Object.keys(SH).forEach(k=>{const el=document.getElementById('fc_'+k);if(el)FC[k]=parseFloat(el.value)||0;});
+  persist();toast('Fee settings saved!');
+}
+function saveLib(){
+  const get=id=>{const de=document.getElementById('d-'+id),me=document.getElementById('m-'+id);return(de?.value||me?.value||'');};
+  LI={name:get('lN'),owner:get('lO'),address:get('lA'),phone:get('lP')};
+  persist();toast('Library info saved!');
+}
+function autoFee(){const sh=document.getElementById('fsh').value;if(sh&&!eId)document.getElementById('ffe').value=FC[sh]||'';}
+function autoFeeM(){const sh=document.getElementById('fsh_m').value;if(sh&&!eId)document.getElementById('ffe_m').value=FC[sh]||'';}
+
+// ════════════════════════════════════════
+//  SEAT DROPDOWN HELPERS
+// ════════════════════════════════════════
+function buildSeatOptions(hall,seatSel,exceptId){
+  if(!hall){seatSel.innerHTML='<option value="">Select hall first</option>';return;}
+  seatSel.innerHTML='<option value="">Select seat</option>';
+  for(let i=1;i<=HALLS[hall].seats;i++){
+    const taken=S.filter(s=>s.hall===hall&&s.seat===i&&s.id!==exceptId).map(s=>s.shift);
+    const free=SHIFTS_LIST.filter(sh=>!taken.some(t=>shiftsConflict(t,sh)));
+    const label=sL(hall,i);
+    if(free.length===0)seatSel.innerHTML+=`<option value="${i}" disabled style="color:#555;">${label} — Full</option>`;
+    else if(taken.length===0)seatSel.innerHTML+=`<option value="${i}">${label} — All free</option>`;
+    else seatSel.innerHTML+=`<option value="${i}">${label} — Free: ${free.map(t=>SH[t]).join(', ')}</option>`;
+  }
+}
+function onHallChange(){buildSeatOptions(document.getElementById('fhall').value,document.getElementById('fst'),eId);}
+function onHallChangeM(){buildSeatOptions(document.getElementById('fhall_m').value,document.getElementById('fst_m'),eId);}
+
+// ════════════════════════════════════════
+//  ADD / EDIT STUDENT (desktop)
+// ════════════════════════════════════════
+function openAdd(){
+  eId=null;currentPhotoData='';
+  document.getElementById('sMT').textContent='Add New Student';
+  ['fn','fph','fadr','ffa','fem','fid','fpur','fnt'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('fhall').value='';document.getElementById('fst').innerHTML='<option value="">Select hall first</option>';
+  document.getElementById('fsh').value='';document.getElementById('ffe').value='';document.getElementById('fgen').value='';
+  document.getElementById('fjd').value=new Date().toISOString().slice(0,10);
+  resetPhotoUI();
+  if(isMobile()){
+    document.getElementById('sMT_m').textContent='Add New Student';
+    ['fn_m','fph_m','fadr_m','ffa_m','fem_m','fid_m','fpur_m','fnt_m'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('fhall_m').value='';document.getElementById('fst_m').innerHTML='<option value="">Select hall first</option>';
+    document.getElementById('fsh_m').value='';document.getElementById('ffe_m').value='';document.getElementById('fgen_m').value='';
+    document.getElementById('fjd_m').value=new Date().toISOString().slice(0,10);
+    openSheet('mStuM');
+  } else {
+    document.getElementById('mStu').classList.add('open');
+  }
+}
+function quickAdd(hall,seat,preferShift){
+  openAdd();
+  const mo=isMobile();
+  setTimeout(()=>{
+    const hEl=document.getElementById(mo?'fhall_m':'fhall');
+    hEl.value=hall;mo?onHallChangeM():onHallChange();
+    setTimeout(()=>{
+      document.getElementById(mo?'fst_m':'fst').value=seat;
+      if(preferShift){const shEl=document.getElementById(mo?'fsh_m':'fsh');shEl.value=preferShift;mo?autoFeeM():autoFee();}
+    },60);
+  },80);
+}
+function openEdit(id){
+  eId=id;const s=S.find(x=>x.id===id);if(!s)return;
+  currentPhotoData=s.photo||'';
+  resetPhotoUI();
+  if(s.photo)setPhotoPreview(s.photo);
+  if(isMobile()){
+    document.getElementById('sMT_m').textContent='Edit Student';
+    ['fn_m','fph_m','fadr_m','ffa_m','fem_m','fid_m','fgen_m','fpur_m','fnt_m'].forEach((x,i)=>{const keys=['name','phone','address','father','emergency','id_no','gender','purpose','notes'];document.getElementById(x).value=s[keys[i]]||'';});
+    document.getElementById('fhall_m').value=s.hall||'';onHallChangeM();
+    setTimeout(()=>{document.getElementById('fst_m').value=s.seat||'';},60);
+    document.getElementById('fsh_m').value=s.shift||'';document.getElementById('ffe_m').value=s.fee||'';
+    document.getElementById('fjd_m').value=s.joinDate||'';
+    openSheet('mStuM');
+  } else {
+    document.getElementById('sMT').textContent='Edit Student';
+    ['fn','fph','fadr','ffa','fem','fid','fgen','fpur','fnt'].forEach((x,i)=>{const keys=['name','phone','address','father','emergency','id_no','gender','purpose','notes'];document.getElementById(x).value=s[keys[i]]||'';});
+    document.getElementById('fhall').value=s.hall||'';onHallChange();
+    setTimeout(()=>{document.getElementById('fst').value=s.seat||'';},60);
+    document.getElementById('fsh').value=s.shift||'';document.getElementById('ffe').value=s.fee||'';
+    document.getElementById('fjd').value=s.joinDate||'';
+    document.getElementById('mStu').classList.add('open');
+  }
+}
+function _saveStuData(name,phone,hall,seat,shift,fee,joinDate,emergency,id_no,address,father,gender,purpose,notes){
+  if(!name){toast('Name is required','err');return false;}
+  if(!phone||phone.length!==10){toast('Valid 10-digit phone required','err');return false;}
+  if(!hall){toast('Please select a hall','err');return false;}
+  if(!seat||seat<1||seat>HALLS[hall].seats){toast('Valid seat required','err');return false;}
+  if(!shift){toast('Please select a shift','err');return false;}
+  if(!fee||fee<=0){toast('Valid monthly fee required','err');return false;}
+  if(!joinDate){toast('Join date required','err');return false;}
+  const conflict=S.find(s=>s.hall===hall&&s.seat==seat&&s.id!==eId&&shiftsConflict(s.shift,shift));
+  if(conflict){toast(`Seat ${sL(hall,seat)}: ${sl(conflict.shift)} conflicts with ${sl(shift)}`,'err');return false;}
+  const photo=currentPhotoData||'';
+  const d={name,phone,hall,seat,shift,fee,joinDate,emergency,id_no,address,father,gender,purpose,notes,photo};
+  let st;
+  if(eId){const i=S.findIndex(s=>s.id===eId);S[i]={...S[i],...d};st=S[i];}
+  else{st={id:uid(),...d};S.push(st);}
+  const isEdit=!!eId;
+  dbWrite({['students/'+_key(st)]:_clean(st)}).then(()=>toast(isEdit?'Student updated!':'Student added!')).catch(()=>{});
+  renderStudents();rdash();return true;
+}
+function saveStu(){
+  const ok=_saveStuData(document.getElementById('fn').value.trim(),document.getElementById('fph').value.trim(),document.getElementById('fhall').value,parseInt(document.getElementById('fst').value),document.getElementById('fsh').value,parseFloat(document.getElementById('ffe').value),document.getElementById('fjd').value,document.getElementById('fem').value.trim(),document.getElementById('fid').value.trim(),document.getElementById('fadr').value.trim(),document.getElementById('ffa').value.trim(),document.getElementById('fgen').value,document.getElementById('fpur').value.trim(),document.getElementById('fnt').value.trim());
+  if(ok)CM('mStu');
+}
+function saveStuM(){
+  const ok=_saveStuData(document.getElementById('fn_m').value.trim(),document.getElementById('fph_m').value.trim(),document.getElementById('fhall_m').value,parseInt(document.getElementById('fst_m').value),document.getElementById('fsh_m').value,parseFloat(document.getElementById('ffe_m').value),document.getElementById('fjd_m').value,document.getElementById('fem_m').value.trim(),document.getElementById('fid_m').value.trim(),document.getElementById('fadr_m').value.trim(),document.getElementById('ffa_m').value.trim(),document.getElementById('fgen_m').value,document.getElementById('fpur_m').value.trim(),document.getElementById('fnt_m').value.trim());
+  if(ok)closeSheet('mStuM');
+}
+
+// ════════════════════════════════════════
+//  FEE PAYMENT
+// ════════════════════════════════════════
+function openFee(id){
+  fSId=id;const s=S.find(x=>x.id===id);if(!s)return;
+  const meta=`Hall ${s.hall} · Seat ${sL(s.hall,s.seat)} · ${sl(s.shift)} · ${INR(s.fee)}/mo`;
+  const phHTML=buildPHHTML(id);
+  if(isMobile()){
+    document.getElementById('fMT_m').textContent='Record Payment';
+    document.getElementById('fMN_m').textContent=s.name;
+    document.getElementById('fMM_m').textContent=meta;
+    document.getElementById('pm_m').value=cm();document.getElementById('pa_m').value=s.fee;
+    document.getElementById('pmo_m').value='Cash';document.getElementById('pd_m').value=new Date().toISOString().slice(0,10);document.getElementById('pr_m').value='';
+    document.getElementById('fPH_m').innerHTML=phHTML;
+    openSheet('mFeeM');
+  } else {
+    document.getElementById('fMT').textContent='Record Payment — '+s.name;
+    document.getElementById('fMN').textContent=s.name;document.getElementById('fMM').textContent=meta;
+    document.getElementById('pm').value=cm();document.getElementById('pa').value=s.fee;
+    document.getElementById('pmo').value='Cash';document.getElementById('pd').value=new Date().toISOString().slice(0,10);document.getElementById('pr').value='';
+    document.getElementById('fPH').innerHTML=phHTML;
+    document.getElementById('mFee').classList.add('open');
+  }
+}
+function buildPHHTML(id){
+  const pays=getPays(id);
+  if(!pays.length)return'<div style="color:var(--dm);font-size:12px;text-align:center;padding:10px;">No history yet</div>';
+  return pays.slice(0,7).map(p=>`<div class="ph-row"><div><div style="font-weight:500;">${fmtM(p.month)}</div><div style="font-size:10px;color:var(--mt);">${fmt(p.date)} · ${p.mode||'Cash'}${p.remarks?' · '+p.remarks:''}</div></div><div style="display:flex;align-items:center;gap:7px;"><span style="font-family:'Syne';font-weight:700;color:var(--ok);">${INR(p.amt)}</span><button class="btn bg btn-xs" onclick="showRx(JSON.parse(this.dataset.p))" data-p='${JSON.stringify(p)}'>🧾</button><button class="btn btn-xs" style="background:var(--erd);color:var(--er);border:none;padding:3px 7px;" onclick="deletePay('${_key(p)}','${id}')">🗑</button></div></div>`).join('');
+}
+function savePay(){
+  const mo=isMobile();
+  const month=document.getElementById(mo?'pm_m':'pm').value;
+  const amt=parseFloat(document.getElementById(mo?'pa_m':'pa').value);
+  const mode=document.getElementById(mo?'pmo_m':'pmo').value;
+  const date=document.getElementById(mo?'pd_m':'pd').value;
+  const remarks=document.getElementById(mo?'pr_m':'pr').value.trim();
+  if(!month){toast('Select payment month','err');return;}
+  if(!amt||amt<=0){toast('Enter valid amount','err');return;}
+  if(savePay._busy)return;            // stops double-tap creating duplicates
+  savePay._busy=true;setTimeout(()=>savePay._busy=false,1500);
+  const pay={id:uid(),sid:fSId,month,amt,mode,date,remarks};
+  P.push(pay);curRx=pay;
+  dbWrite({['payments/'+pay.id]:pay}).then(()=>toast('Payment recorded!')).catch(()=>{});
+  renderStudents();renderFees();renderAlerts();rdash();
+  if(mo)closeSheet('mFeeM'); else CM('mFee');
+  showRx(pay);
+}
+
+// ════════════════════════════════════════
+//  RECEIPT
+// ════════════════════════════════════════
+function buildRxHTML(pay,s){
+  const rxNo='RX-'+pay.id.slice(-6).toUpperCase();
+  return`<div class="rx-card"><div class="rx-lib">${LI.name||'StudyNest'}</div>${LI.address?`<div style="font-size:10.5px;color:var(--mt);">${LI.address}</div>`:''}<div style="font-size:9.5px;color:var(--dm);margin-top:5px;">Receipt: ${rxNo}</div></div>${[['Student',s.name],['Phone',s.phone||'—'],['Hall','Hall '+s.hall],['Seat',sL(s.hall,s.seat)],['Shift',sl(s.shift)+' ('+ST[s.shift]+')'],['Aadhar/ID',s.id_no||'—'],['Month',fmtM(pay.month)],['Amount',INR(pay.amt)],['Mode',pay.mode||'Cash'],['Date',fmt(pay.date)],pay.remarks?['Remarks',pay.remarks]:null].filter(Boolean).map(([l,v])=>`<div class="rx-row"><span>${l}</span><span>${v}</span></div>`).join('')}<hr class="rxd"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:var(--mt);font-size:12px;">Monthly Fee</span><span style="font-family:'Syne';font-weight:800;">${INR(s.fee)}</span></div><div style="display:flex;justify-content:space-between;"><span style="color:var(--mt);font-size:12px;">Received</span><span style="font-family:'Syne';font-weight:800;font-size:18px;color:var(--ok);">${INR(pay.amt)}</span></div>${pay.amt<s.fee?`<div style="display:flex;justify-content:space-between;margin-top:5px;"><span style="color:var(--er);font-size:12px;">Balance</span><span style="font-family:'Syne';font-weight:800;color:var(--er);">${INR(s.fee-pay.amt)}</span></div>`:''}<div style="text-align:center;margin-top:13px;font-size:10.5px;color:var(--dm);">Thank you! Keep studying hard 📚${LI.owner?'<br>Auth: '+LI.owner:''}</div>`;
+}
+function showRx(pay){
+  const s=S.find(x=>x.id===pay.sid);if(!s)return;
+  const html=buildRxHTML(pay,s);curRx=pay;
+  if(isMobile()){document.getElementById('rxBody_m').innerHTML=html;openSheet('mRxM');}
+  else{document.getElementById('rxBody').innerHTML=html;document.getElementById('mRx').classList.add('open');}
+}
+function previewRx(){
+  const mo=isMobile();
+  const s=S.find(x=>x.id===fSId);if(!s)return;
+  const month=document.getElementById(mo?'pm_m':'pm').value,amt=parseFloat(document.getElementById(mo?'pa_m':'pa').value)||0;
+  const mode=document.getElementById(mo?'pmo_m':'pmo').value,date=document.getElementById(mo?'pd_m':'pd').value,remarks=document.getElementById(mo?'pr_m':'pr').value.trim();
+  showRx({id:'PREVIEW',sid:fSId,month,amt,mode,date,remarks});
+}
+function printRx(){
+  if(!curRx)return;const s=S.find(x=>x.id===curRx.sid);if(!s)return;
+  const rxNo='RX-'+curRx.id.slice(-6).toUpperCase();
+  document.getElementById('rxPrint').innerHTML=`<h2>${LI.name||'StudyNest'}</h2><div class="rsub">${LI.address||''} ${LI.phone?'· '+LI.phone:''}</div><p style="text-align:center;font-size:11px;color:#999;margin-bottom:12px;">PAYMENT RECEIPT — ${rxNo}</p>${[['Student',s.name],['Phone',s.phone||'—'],['Hall','Hall '+s.hall],['Seat',sL(s.hall,s.seat)],['Shift',sl(s.shift)+' ('+ST[s.shift]+')'],['Aadhar/ID',s.id_no||'—'],['Month',fmtM(curRx.month)],['Mode',curRx.mode||'Cash'],['Date',fmt(curRx.date)],curRx.remarks?['Remarks',curRx.remarks]:null].filter(Boolean).map(([l,v])=>`<div class="rr"><span>${l}</span><span>${v}</span></div>`).join('')}<div class="rr tot"><span>Amount Paid</span><span>${INR(curRx.amt)}</span></div>${curRx.amt<s.fee?`<div class="rr" style="color:red;"><span>Balance</span><span>${INR(s.fee-curRx.amt)}</span></div>`:''}<div class="rft">${LI.owner?'Authorized by: '+LI.owner+'<br>':''}Printed: ${new Date().toLocaleDateString('en-IN')}</div>`;
+  window.print();
+}
+
+// ════════════════════════════════════════
+//  STUDENT DETAIL
+// ════════════════════════════════════════
+function openDet(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  const st=fStat(s),pays=getPays(id),tot=pays.reduce((a,p)=>a+p.amt,0),col=aCol(s.name);
+  const photoHTML=s.photo
+    ?`<div style="width:60px;height:60px;border-radius:50%;overflow:hidden;border:2px solid var(--bd);flex-shrink:0;"><img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;"></div>`
+    :`<div class="av" style="background:${col}22;color:${col};width:60px;height:60px;font-size:19px;flex-shrink:0;">${ini(s.name)}</div>`;
+  const html=`<div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--bd);">${photoHTML}<div style="flex:1;"><div style="font-size:18px;font-weight:800;font-family:'Syne';">${s.name}</div><div style="color:var(--mt);font-size:11.5px;margin-top:3px;">📞 ${s.phone||'—'} · 🏛 Hall ${s.hall}-${s.seat}</div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;"><span class="tag tag-h${s.hall}">Hall ${s.hall}</span><span class="tag tag-${s.shift}">${sl(s.shift)}</span><span class="tag tag-${st}">${st.toUpperCase()}</span>${s.purpose?`<span class="tag" style="background:var(--sf3);color:var(--mt);">${s.purpose}</span>`:''}</div></div><div style="text-align:right;"><div style="font-family:'Syne';font-size:22px;font-weight:800;">${INR(s.fee)}</div><div style="font-size:10px;color:var(--mt);">/month</div></div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px;">${[['Father','👨',s.father],['Gender','⚧',s.gender],['Emergency','🆘',s.emergency],['Aadhar/ID','🪪',s.id_no],['Joined','📅',fmt(s.joinDate)],['Purpose','📖',s.purpose]].filter(([,,v])=>v).map(([l,i,v])=>`<div><div style="font-size:8.5px;font-weight:700;color:var(--dm);text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px;">${i} ${l}</div><div style="font-size:12.5px;">${v}</div></div>`).join('')}${s.address?`<div style="grid-column:1/-1;"><div style="font-size:8.5px;font-weight:700;color:var(--dm);text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px;">🏠 Address</div><div style="font-size:12.5px;">${s.address}</div></div>`:''}</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;"><div style="background:var(--sf2);border-radius:var(--rs);padding:10px;"><div class="sec-lbl">Total Paid</div><div style="font-family:'Syne';font-size:18px;font-weight:800;color:var(--ok);">${INR(tot)}</div></div><div style="background:var(--sf2);border-radius:var(--rs);padding:10px;"><div class="sec-lbl">Payments</div><div style="font-family:'Syne';font-size:18px;font-weight:800;">${pays.length}</div></div><div style="background:var(--sf2);border-radius:var(--rs);padding:10px;"><div class="sec-lbl">This Month</div><div style="font-family:'Syne';font-size:18px;font-weight:800;color:${st==='paid'?'var(--ok)':'var(--er)'};">${INR(mPaid(s.id,cm()))}</div></div></div><div class="sec-lbl">Payment History</div>${pays.length?pays.slice(0,8).map(p=>`<div class="ph-row"><div><div style="font-weight:500;">${fmtM(p.month)}</div><div style="font-size:10px;color:var(--mt);">${fmt(p.date)} · ${p.mode||'Cash'}${p.remarks?' · '+p.remarks:''}</div></div><div style="display:flex;align-items:center;gap:7px;"><span style="font-family:'Syne';font-weight:700;color:var(--ok);">${INR(p.amt)}</span><button class="btn bg btn-xs" onclick="showRx(JSON.parse(this.dataset.p))" data-p='${JSON.stringify(p)}'>🧾</button><button class="btn btn-xs" style="background:var(--erd);color:var(--er);border:none;padding:3px 7px;" onclick="deletePay('${_key(p)}','${s.id}')">🗑</button></div></div>`).join(''):'<div style="color:var(--dm);font-size:12px;padding:8px 0;">No payments yet</div>'}`;
+  if(isMobile()){
+    document.getElementById('detBody_m').innerHTML=html;
+    document.getElementById('m-dPay').onclick=()=>{closeSheet('mDetM');openFee(id);};
+    document.getElementById('m-dDel').onclick=()=>delStu(id);
+    document.getElementById('m-dEdit').onclick=()=>{closeSheet('mDetM');openEdit(id);};
+    const lp=pays[0];document.getElementById('m-dRx').onclick=()=>lp?showRx(lp):toast('No payment yet','err');
+    openSheet('mDetM');
+  } else {
+    document.getElementById('detBody').innerHTML=html;
+    document.getElementById('dPay').onclick=()=>{CM('mDet');openFee(id);};
+    document.getElementById('dDel').onclick=()=>delStu(id);
+    const lp=pays[0];document.getElementById('dRx').onclick=()=>lp?showRx(lp):toast('No payment yet','err');
+    document.getElementById('mDet').classList.add('open');
+  }
+}
+function delStu(id){
+  if(!confirm('Remove student and all payment records?'))return;
+  const upd={};
+  S.filter(s=>s.id===id).forEach(s=>upd['students/'+_key(s)]=null);
+  P.filter(p=>p.sid===id).forEach(p=>upd['payments/'+_key(p)]=null);
+  S=S.filter(s=>s.id!==id);P=P.filter(p=>p.sid!==id);
+  dbWrite(upd).catch(()=>{});
+  if(isMobile())closeSheet('mDetM');else CM('mDet');
+  renderStudents();rdash();renderAlerts();toast('Student removed');
+}
+function deletePay(payKey, stuId){
+  if(!confirm('Delete this payment record? This cannot be undone.'))return;
+  P=P.filter(p=>_key(p)!==payKey);
+  dbWrite({['payments/'+payKey]:null})
+    .then(()=>toast('Payment deleted ✓'))
+    .catch(()=>{});
+  // Refresh payment history wherever it's visible
+  const fPH=document.getElementById('fPH');
+  const fPH_m=document.getElementById('fPH_m');
+  if(fPH)fPH.innerHTML=buildPHHTML(stuId);
+  if(fPH_m)fPH_m.innerHTML=buildPHHTML(stuId);
+  // Refresh detail view if open
+  const detOpen=document.getElementById('mDet')?.classList.contains('open');
+  const detOpenM=document.getElementById('mDetM')?.classList.contains('open');
+  if(detOpen||detOpenM)openDet(stuId);
+  renderFees();renderAlerts();rdash();
+}
+
+// ════════════════════════════════════════
+//  PHOTO / CAMERA
+// ════════════════════════════════════════
+let currentPhotoData = '';
+let camStream = null;
+
+function resetPhotoUI(){
+  ['photoPreview','photoPreview_m'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML='<div class="ph-placeholder">👤</div><div class="ph-overlay">📷</div>';
+  });
+  ['clearPhotoBtn','clearPhotoBtn_m'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+}
+
+function setPhotoPreview(dataUrl){
+  ['photoPreview','photoPreview_m'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML=`<img src="${dataUrl}" alt="Student photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"><div class="ph-overlay">📷</div>`;
+  });
+  ['clearPhotoBtn','clearPhotoBtn_m'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='';
+  });
+}
+
+function clearPhoto(){
+  currentPhotoData='';
+  resetPhotoUI();
+}
+
+function onFileSelected(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    currentPhotoData=ev.target.result;
+    setPhotoPreview(currentPhotoData);
+    toast('Photo uploaded!');
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
+
+function openCam(){
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false})
+    .then(stream=>{
+      camStream=stream;
+      const video=document.getElementById('camVideo');
+      video.srcObject=stream;
+      document.getElementById('camModal').classList.add('open');
+    })
+    .catch(()=>toast('Camera not available — use Upload instead','err'));
+}
+
+function closeCam(){
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  document.getElementById('camModal').classList.remove('open');
+}
+
+function shootPhoto(){
+  const video=document.getElementById('camVideo');
+  const canvas=document.getElementById('camCanvas');
+  const size=Math.min(video.videoWidth,video.videoHeight);
+  canvas.width=320;canvas.height=320;
+  const ctx=canvas.getContext('2d');
+  const sx=(video.videoWidth-size)/2,sy=(video.videoHeight-size)/2;
+  ctx.save();
+  ctx.translate(320,0);ctx.scale(-1,1);
+  ctx.drawImage(video,sx,sy,size,size,0,0,320,320);
+  ctx.restore();
+  currentPhotoData=canvas.toDataURL('image/jpeg',0.85);
+  setPhotoPreview(currentPhotoData);
+  closeCam();
+  toast('📷 Photo captured!');
+}
+
+function avatarHTML(s,size=34,fontSize=11){
+  if(s.photo){
+    return`<div class="av" style="width:${size}px;height:${size}px;overflow:hidden;flex-shrink:0;"><img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`;
+  }
+  const col=aCol(s.name);
+  return`<div class="av" style="background:${col}22;color:${col};width:${size}px;height:${size}px;font-size:${fontSize}px;">${ini(s.name)}</div>`;
+}
+
+// ════════════════════════════════════════
+//  SEED DATA (runs once on first launch)
+// ════════════════════════════════════════
+function _seedData() {
+  const seed=[
+    {id:uid(),name:'Rahul Sharma',phone:'9876543210',hall:'A',seat:3,shift:'morning',fee:FC.morning,joinDate:'2025-01-05',father:'Ramesh Sharma',id_no:'2345-6789-0123',address:'Sector 12, Noida',gender:'Male',purpose:'UPSC',emergency:'9812345678'},
+    {id:uid(),name:'Priya Singh',phone:'9988776655',hall:'A',seat:7,shift:'evening',fee:FC.evening,joinDate:'2025-01-10',father:'Vijay Singh',id_no:'9876-5432-1011',address:'Laxmi Nagar, Delhi',gender:'Female',purpose:'Banking',emergency:'9811223344'},
+    {id:uid(),name:'Arjun Mehta',phone:'9001122334',hall:'A',seat:3,shift:'evening',fee:FC.evening,joinDate:'2025-02-01',father:'Suresh Mehta',id_no:'5566-7788-9900',address:'Noida Sector 18',gender:'Male',purpose:'IIT JEE',emergency:'9001122300'},
+    {id:uid(),name:'Amit Kumar',phone:'8877665544',hall:'B',seat:5,shift:'fullday',fee:FC.fullday,joinDate:'2025-02-01',father:'Suresh Kumar',id_no:'1122-3344-5566',address:'Vaishali, Ghaziabad',gender:'Male',purpose:'CA Prep',emergency:'8811223344'},
+    {id:uid(),name:'Sneha Patel',phone:'7766554433',hall:'B',seat:12,shift:'morning',fee:FC.morning,joinDate:'2025-02-15',father:'Mohan Patel',id_no:'6677-8899-0011',address:'Dwarka, Delhi',gender:'Female',purpose:'GATE',emergency:'7711223344'},
+    {id:uid(),name:'Vikash Yadav',phone:'6655443322',hall:'C',seat:8,shift:'24hour',fee:FC['24hour'],joinDate:'2024-12-01',father:'Sunil Yadav',id_no:'3344-5566-7788',address:'Rohini, Delhi',gender:'Male',purpose:'SSC CGL',emergency:'6611223344'},
+    {id:uid(),name:'Rohit Gupta',phone:'9123456780',hall:'D',seat:2,shift:'morning',fee:FC.morning,joinDate:'2025-01-20',father:'Dinesh Gupta',id_no:'1234-5678-9012',address:'Shahdara, Delhi',gender:'Male',purpose:'RRB',emergency:'9100234567'},
+    {id:uid(),name:'Nikhil Tiwari',phone:'7890123456',hall:'E',seat:6,shift:'morning',fee:FC.morning,joinDate:'2025-01-12',father:'Anil Tiwari',id_no:'9012-3456-7890',address:'Indirapuram, Ghaziabad',gender:'Male',purpose:'UPSC',emergency:'7800012345'},
+  ];
+  const m=cm(),prev=new Date();prev.setMonth(prev.getMonth()-1);const pm=prev.toISOString().slice(0,7);
+  S=seed;
+  P=[
+    {id:uid(),sid:seed[0].id,month:m,amt:seed[0].fee,mode:'UPI',date:new Date().toISOString().slice(0,10),remarks:''},
+    {id:uid(),sid:seed[1].id,month:m,amt:seed[1].fee,mode:'Cash',date:new Date().toISOString().slice(0,10),remarks:''},
+    {id:uid(),sid:seed[3].id,month:m,amt:500,mode:'Cash',date:new Date().toISOString().slice(0,10),remarks:'Partial'},
+    {id:uid(),sid:seed[0].id,month:pm,amt:seed[0].fee,mode:'Cash',date:prev.toISOString().slice(0,10),remarks:''},
+  ];
+  // Write everything once + the "seeded" flag so this never runs again on any device
+  const all={config:FC,library:LI,_seeded:true};
+  S.forEach(s=>all['students/'+s.id]=s);
+  P.forEach(p=>all['payments/'+p.id]=p);
+  dbWrite(all).catch(()=>{});
+  if(!DB) localStorage.setItem('sn_seeded', '1');
+  _refreshAll();
+}
+
+// ════════════════════════════════════════
+//  EXPORT — CSV + XLSX
+// ════════════════════════════════════════
+function escCSV(v){
+  const s=String(v??'').replace(/"/g,'""');
+  return s.includes(',')||s.includes('"')||s.includes('\n')?`"${s}"`:s;
+}
+
+function exportCSV(){
+  if(!S.length){toast('No students to export','err');return;}
+
+  // Sheet 1 — Students
+  const stuHeaders=['ID','Name','Phone','Hall','Seat','Shift','Monthly Fee','Join Date','Father','Emergency','Aadhar/ID','Gender','Purpose','Address','Notes'];
+  const stuRows=S.map(s=>[s.id,s.name,s.phone,'Hall '+s.hall,sL(s.hall,s.seat),SH[s.shift]||s.shift,s.fee,s.joinDate,s.father,s.emergency,s.id_no,s.gender,s.purpose,s.address,s.notes]);
+
+  // Sheet 2 — Payments
+  const payHeaders=['Payment ID','Student ID','Student Name','Month','Amount','Mode','Date','Remarks'];
+  const payRows=P.map(p=>{const st=S.find(x=>x.id===p.sid);return[p.id,p.sid,st?.name||'',fmtM(p.month),p.amt,p.mode,fmt(p.date),p.remarks];});
+
+  // Combine into one CSV with section labels
+  let csv='NAVMANTHAN LIBRARY — STUDENT RECORDS\n';
+  csv+=`Exported: ${new Date().toLocaleDateString('en-IN')}\n\n`;
+  csv+='=== STUDENTS ===\n';
+  csv+=stuHeaders.map(escCSV).join(',')+'\n';
+  csv+=stuRows.map(r=>r.map(escCSV).join(',')).join('\n');
+  csv+='\n\n=== PAYMENTS ===\n';
+  csv+=payHeaders.map(escCSV).join(',')+'\n';
+  csv+=payRows.map(r=>r.map(escCSV).join(',')).join('\n');
+
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`Navmanthan_Library_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();URL.revokeObjectURL(url);
+  toast(`✅ CSV exported — ${S.length} students, ${P.length} payments`);
+}
+
+function exportXLSX(){
+  if(!S.length){toast('No students to export','err');return;}
+
+  // Build a minimal valid XLSX using XML/ZIP (Office Open XML)
+  // We'll use a data-URI approach with HTML table converted to xls (supported by Excel)
+  const m=cm();
+
+  const stuRows=S.map(s=>`<tr>
+    <td>${s.id||''}</td><td>${s.name||''}</td><td>${s.phone||''}</td>
+    <td>Hall ${s.hall}</td><td>${sL(s.hall,s.seat)}</td>
+    <td>${SH[s.shift]||s.shift||''}</td><td>${s.fee||0}</td>
+    <td>${s.joinDate||''}</td><td>${fStat(s,m).toUpperCase()}</td>
+    <td>${mPaid(s.id,m)}</td><td>${s.fee-(mPaid(s.id,m))>0?s.fee-mPaid(s.id,m):0}</td>
+    <td>${s.father||''}</td><td>${s.emergency||''}</td>
+    <td>${s.id_no||''}</td><td>${s.gender||''}</td>
+    <td>${s.purpose||''}</td><td>${s.address||''}</td><td>${s.notes||''}</td>
+  </tr>`).join('');
+
+  const payRows=P.map(p=>{
+    const st=S.find(x=>x.id===p.sid);
+    return`<tr>
+      <td>${p.id||''}</td><td>${st?.name||''}</td>
+      <td>${fmtM(p.month)}</td><td>${p.amt||0}</td>
+      <td>${p.mode||''}</td><td>${fmt(p.date)}</td><td>${p.remarks||''}</td>
+    </tr>`;
+  }).join('');
+
+  // Monthly summary per hall
+  const hallRows=Object.keys(HALLS).map(h=>{
+    const stu=S.filter(s=>s.hall===h);
+    const rev=P.filter(p=>stu.some(s=>s.id===p.sid)&&p.month===m).reduce((a,p)=>a+p.amt,0);
+    const due=stu.filter(s=>fStat(s,m)!=='paid').length;
+    return`<tr><td>Hall ${h}</td><td>${stu.length}</td><td>${HALLS[h].seats}</td><td>₹${rev.toLocaleString('en-IN')}</td><td>${due}</td></tr>`;
+  }).join('');
+
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:x="urn:schemas-microsoft-com:office:excel"
+    xmlns="http://www.w3.org/TR/REC-html40">
+  <head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11pt}
+    .title{font-size:14pt;font-weight:bold;background:#1a3a6b;color:#ffffff}
+    .hdr{background:#f5c842;font-weight:bold;font-size:10pt}
+    .sh{background:#20202c;color:#f5c842;font-size:12pt;font-weight:bold}
+    td,th{border:1px solid #cccccc;padding:5px 8px}
+    .paid{background:#d4edda;color:#155724}
+    .due{background:#f8d7da;color:#721c24}
+  </style>
+  </head><body>
+  <table>
+    <tr><td colspan="18" class="title">📚 Navmanthan Library — Records Export</td></tr>
+    <tr><td colspan="18">Exported: ${new Date().toLocaleDateString('en-IN')} | Total Students: ${S.length} | Total Payments: ${P.length}</td></tr>
+    <tr><td colspan="18"></td></tr>
+
+    <tr><td colspan="18" class="sh">STUDENTS</td></tr>
+    <tr class="hdr">
+      <td>ID</td><td>Name</td><td>Phone</td><td>Hall</td><td>Seat</td>
+      <td>Shift</td><td>Fee/Month</td><td>Join Date</td><td>Status (${fmtM(m)})</td>
+      <td>Paid (${fmtM(m)})</td><td>Due (${fmtM(m)})</td>
+      <td>Father</td><td>Emergency</td><td>Aadhar/ID</td>
+      <td>Gender</td><td>Purpose</td><td>Address</td><td>Notes</td>
+    </tr>
+    ${stuRows}
+
+    <tr><td colspan="18"></td></tr>
+    <tr><td colspan="18" class="sh">PAYMENTS</td></tr>
+    <tr class="hdr">
+      <td>Payment ID</td><td>Student Name</td><td>Month</td>
+      <td>Amount (₹)</td><td>Mode</td><td>Date</td><td>Remarks</td>
+    </tr>
+    ${payRows}
+
+    <tr><td colspan="18"></td></tr>
+    <tr><td colspan="18" class="sh">HALL SUMMARY — ${fmtM(m)}</td></tr>
+    <tr class="hdr"><td>Hall</td><td>Students</td><td>Seats</td><td>Revenue</td><td>Due Count</td></tr>
+    ${hallRows}
+  </table>
+  </body></html>`;
+
+  const blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Navmanthan_Library_${new Date().toISOString().slice(0,10)}.xls`;
+  a.click();URL.revokeObjectURL(url);
+  toast(`✅ Excel exported — ${S.length} students, ${P.length} payments`);
+}
+
+// ════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════
+if(document.getElementById('d-todayDate'))
+  document.getElementById('d-todayDate').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+initFirebase();
+</script>
+</body>
+</html>
